@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forschungstauchgang im Koordinatensystem</title>
+<style>
+:root{
+  --paper:#eef3f1; --ink:#12303a; --muted:#56717a; --line:#bfd2d2;
+  --sea:#d6e9ea; --deep:#0e3a4a; --teal:#0f6e64; --sand:#efe6cf; --ship:#8794a0; --hit:#b8321f; --ok:#2f6b46;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='320'%3E%3Cg fill='none' stroke='%2390b4b8' stroke-opacity='.28' stroke-width='1'%3E%3Cpath d='M-20 60 C60 30 120 90 200 60 S340 20 420 55 S500 70 520 50'/%3E%3Cpath d='M-20 80 C70 52 130 112 210 82 S350 44 430 78 S500 92 520 72'/%3E%3Cpath d='M-20 190 C40 170 110 220 190 196 S330 160 400 192 S480 210 520 190'/%3E%3Cpath d='M-20 212 C50 192 120 242 200 218 S340 182 410 214 S490 232 520 212'/%3E%3Cpath d='M-20 236 C60 214 130 266 210 242 S350 206 420 238 S500 256 520 236'/%3E%3C/g%3E%3C/svg%3E") repeat;background-size:480px 320px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+header{position:relative;padding-bottom:22px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12'%3E%3Cpath d='M0 6 Q10 0 20 6 T40 6' fill='none' stroke='%2312303a' stroke-width='2'/%3E%3C/svg%3E") repeat-x}
+.kicker{font:12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.6vw,40px);line-height:1.05;margin:8px 0 0}
+h2{font-family:var(--serif);font-weight:600;font-size:24px;margin:0 0 6px}
+h3{font-size:13px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+p{margin:0 0 10px}
+.hint{color:var(--muted);font-size:14.5px}
+.score{font:13px/1.4 var(--mono);text-align:right;border:1.5px solid var(--ink);padding:7px 10px;background:#fff;transform:rotate(1deg)}
+.score:empty{display:none}
+.score .t{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.score b{font-size:15px}
+
+.screen{display:none}
+.screen.on{display:block}
+
+button{font:600 15px/1 system-ui,sans-serif;padding:11px 16px;border:1.5px solid var(--ink);border-radius:2px;cursor:pointer;background:var(--paper);color:var(--ink)}
+button.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+button.primary:hover:not(:disabled){background:#0b5a52}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid #e2a93b;outline-offset:2px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.card{background:#fff;border:1.5px solid var(--ink);border-top:6px solid var(--teal);padding:22px;max-width:560px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;margin-bottom:4px}
+.field input[type=text]{width:100%;font:inherit;padding:9px 11px;border:1.5px solid var(--ink);border-radius:2px;background:#f7fbfb}
+.check{display:flex;gap:9px;align-items:flex-start;margin:8px 0;font-size:15px}
+.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--ink);flex:none}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.board{background:linear-gradient(#e2f1f1 0%,#c4e0e3 55%,#9fc8cf 100%);border:1.5px solid var(--ink);position:relative}
+.board::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='10'%3E%3Cpath d='M0 5 Q7.5 1 15 5 T30 5' fill='none' stroke='%23ffffff' stroke-width='1.6'/%3E%3C/svg%3E") repeat-x;opacity:.9;pointer-events:none}
+.board .depth{position:absolute;right:6px;font:10px var(--mono);color:#2d5560;pointer-events:none}
+.board svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.board.small{max-width:300px}
+.board.small::before{display:none}
+svg .g{stroke:#ffffff;stroke-opacity:.7;stroke-width:1}
+svg .ax{stroke:var(--ink);stroke-width:1.8}
+svg .lbl{font:11px var(--mono);fill:var(--ink)}
+svg .axn{font:italic 600 15px var(--serif);fill:var(--ink)}
+svg .pt{fill:#4f7983}
+svg .hitarea{fill:transparent;cursor:pointer}
+svg .hitarea:hover{fill:rgba(15,110,100,.18)}
+.nopick svg .hitarea{cursor:default}
+.nopick svg .hitarea:hover{fill:transparent}
+
+.fleet{list-style:none;padding:0;margin:0}
+.fleet li{display:flex;align-items:center;gap:10px;padding:7px 8px;border:1.5px solid transparent;cursor:pointer;border-radius:2px}
+.fleet li.sel{border-color:var(--ink);background:#fff}
+.fleet li.done .nm{color:var(--muted)}
+.fleet li.sunk .nm{color:#0f6e64;font-weight:600}
+.fleet .boxes{display:flex;gap:3px}
+.fleet .boxes i{width:14px;height:14px;border:1.5px solid var(--ink);border-radius:50%;background:var(--ship)}
+.fleet li.sunk .boxes i{outline:2px solid #0f6e64;outline-offset:1px}
+.fleet .st{margin-left:auto;font:12px var(--mono);color:var(--muted)}
+.view .fleet li{cursor:default}
+
+.shoot{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.coord{display:flex;align-items:center;font:600 26px/1 var(--mono)}
+.num{display:flex;flex-direction:column;align-items:center;gap:4px}
+.num small{font:12px var(--mono);color:var(--muted)}
+.num .in{display:flex}
+.num input{width:62px;font:600 22px var(--mono);text-align:center;padding:7px 4px;border:1.5px solid var(--ink);border-left:0;border-radius:0 2px 2px 0;background:#fff;-moz-appearance:textfield}
+.num input::-webkit-inner-spin-button,.num input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num .sg{padding:0 10px;font:600 18px var(--mono);border-radius:2px 0 0 2px}
+.msg{margin-top:14px;padding:11px 14px;border-left:4px solid var(--ink);background:#fff;min-height:46px}
+.msg.hit{border-color:#0f6e64;background:#e6f2ef}
+.msg.err{border-color:#c98a12;background:#fdf5e4}
+.log{list-style:none;padding:0;margin:0;font:13.5px/1.6 var(--mono);max-height:190px;overflow:auto;border-top:1px solid var(--line)}
+.log li{border-bottom:1px solid var(--line);padding:2px 0;display:flex;gap:8px}
+.log .who{color:var(--muted);min-width:7ch}
+.log .h{color:#0f6e64;font-weight:700}
+
+.cover{min-height:68vh;display:grid;place-items:center;text-align:center;background:linear-gradient(#1d5566,#0e3a4a 60%,#082a36);border:1.5px solid var(--ink);padding:30px 16px;position:relative;overflow:hidden}
+.cover::before{content:"";position:absolute;left:0;right:0;top:0;height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='14'%3E%3Cpath d='M0 7 Q10 0 20 7 T40 7' fill='none' stroke='%23a9d3d8' stroke-width='2'/%3E%3C/svg%3E") repeat-x}
+.cover .card{border-top-color:#e0893a}
+.cover .card{text-align:center;margin:auto}
+.big{font-family:var(--serif);font-size:30px;font-weight:600;margin:6px 0 14px}
+.turnbar{background:var(--deep);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.turnbar .who{font-family:var(--serif);font-size:24px;font-weight:600}
+.turnbar .hint{color:#a9d3d8}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--muted);margin-top:8px}
+.legend svg{vertical-align:-3px;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="kicker">Tauchlogbuch · Mathematik · Koordinatensystem</div>
+    <h1>Forschungstauchgang</h1>
+  </div>
+  <div class="score" id="score"></div>
+</header>
+
+<!-- Start -->
+<section class="screen on" id="sStart">
+  <div class="card">
+    <h2>Neues Spiel</h2>
+    <p class="hint">Zwei Personen spielen abwechselnd an diesem Gerät. Jede Person versteckt Meerestiere auf den Gitterpunkten von (−7|−7) bis (7|7). Dann taucht ihr abwechselnd an Koordinaten und versucht, die Tiere der anderen Person zu entdecken.</p>
+    <div class="field"><label for="n1">Spieler 1</label><input type="text" id="n1" value="Spieler 1" maxlength="20"></div>
+    <div class="field"><label for="n2">Spieler 2</label><input type="text" id="n2" value="Spieler 2" maxlength="20"></div>
+    <label class="check"><input type="checkbox" id="optBonus" checked> Nach einer Sichtung darf man nochmals tauchen</label>
+    <label class="check"><input type="checkbox" id="optClick"> Tauchen auch per Klick auf einen Punkt (sonst nur mit Koordinaten)</label>
+    <div class="btns" style="margin-top:14px"><button class="primary" id="go">Tiere verstecken</button></div>
+  </div>
+</section>
+
+<!-- Abdeckung -->
+<section class="screen" id="sCover">
+  <div class="cover">
+    <div class="card">
+      <div class="hint" id="coverPre">Gib das Gerät weiter an</div>
+      <div class="big" id="coverName"></div>
+      <p class="hint">Die andere Person schaut bitte weg, bis du abgetaucht bist.</p>
+      <button class="primary" id="coverGo">Abtauchen</button>
+    </div>
+  </div>
+</section>
+
+<!-- Platzieren -->
+<section class="screen" id="sSetup">
+  <div class="turnbar"><div class="who" id="setupWho"></div><div class="hint">Tiere verstecken</div></div>
+  <div class="layout">
+    <div class="board" id="setupBoard"></div>
+    <div>
+      <p class="hint">Wähle ein Tier und klicke auf den Startpunkt. Waagrecht schwimmt es nach rechts, senkrecht nach unten.</p>
+      <ul class="fleet" id="setupFleet"></ul>
+      <div class="btns" style="margin-top:14px">
+        <button id="rot">Drehen: waagrecht</button>
+        <button id="rnd">Zufällig</button>
+        <button id="clr">Alles entfernen</button>
+      </div>
+      <div class="msg" id="setupMsg">Startpunkt wählen.</div>
+      <div class="btns" style="margin-top:16px"><button class="primary" id="setupDone" disabled>Fertig</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- Spiel -->
+<section class="screen" id="sPlay">
+  <div class="turnbar"><div class="who" id="playWho"></div><div class="hint" id="playSub"></div></div>
+  <div class="layout">
+    <div>
+      <div class="board" id="targetBoard"></div>
+      <div class="legend">
+        <span><svg width="14" height="14"><circle cx="7" cy="7" r="4.5" fill="none" stroke="#1b2733" stroke-width="1.6"/></svg>Nur Wasser</span>
+        <span><svg width="14" height="14"><path d="M7 0L14 7L7 14L0 7Z" fill="#0f6e64"/></svg>Gesichtet</span>
+        <span><svg width="22" height="14"><rect x="1" y="2" width="20" height="10" rx="5" fill="#46617d" opacity=".6" stroke="#1b2733"/></svg>ganz entdeckt</span>
+      </div>
+    </div>
+    <div>
+      <div class="shoot">
+        <div class="coord">(</div>
+        <div class="num"><small>x</small><div class="in"><button class="sg" data-for="ix" aria-label="Vorzeichen x wechseln">±</button><input id="ix" type="text" inputmode="numeric" autocomplete="off" maxlength="3"></div></div>
+        <div class="coord">|</div>
+        <div class="num"><small>y</small><div class="in"><button class="sg" data-for="iy" aria-label="Vorzeichen y wechseln">±</button><input id="iy" type="text" inputmode="numeric" autocomplete="off" maxlength="3"></div></div>
+        <div class="coord">)</div>
+        <button class="primary" id="fire">Tauchen</button>
+      </div>
+      <div class="msg" id="playMsg"></div>
+      <div class="btns" style="margin-top:12px"><button class="primary" id="next" hidden></button></div>
+
+      <h3 id="enemyHead">Tiere der anderen Person</h3>
+      <ul class="fleet view" id="enemyFleet"></ul>
+      <h3>Dein Meer</h3>
+      <div class="board small nopick" id="ownBoard"></div>
+      <h3>Tauchgänge</h3>
+      <ul class="log" id="log"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- Ende -->
+<section class="screen" id="sEnd">
+  <div class="card">
+    <div class="hint">Alle Tiere entdeckt</div>
+    <div class="big" id="winner"></div>
+    <p id="endStats"></p>
+    <h3>Beide Meere aufgedeckt</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="endBoards"></div>
+    <div class="btns" style="margin-top:16px"><button class="primary" id="again">Neues Spiel</button></div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const N = 7, S = 30, O = 255;
+const px = x => O + S*x, py = y => O - S*y;
+const key = (x,y) => x + "," + y;
+const fmt = n => (n < 0 ? "−" + (-n) : String(n));
+const pt = (x,y) => `(${fmt(x)}|${fmt(y)})`;
+const FLEET = [
+  {name:"Blauwal", art:"den", len:5, col:"#46617d"},
+  {name:"Delfin", art:"den", len:4, col:"#7f9fb6"},
+  {name:"Mantarochen", art:"den", len:3, col:"#6f6a8c"},
+  {name:"Meeresschildkröte", art:"die", len:3, col:"#5f8a55"},
+  {name:"Clownfisch", art:"den", len:2, col:"#e0893a"}
+];
+
+let P, cur, opt, sel, dir, afterCover, wins = [0,0];
+
+function show(id){ document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id)); window.scrollTo(0,0); }
+function newPlayer(name){ return {name, ships: FLEET.map(f => ({...f, cells:null, hits:0})), shots:{}, log:[]}; }
+
+function cellsFor(len, x, y, d){ const c=[]; for(let i=0;i<len;i++) c.push(d==="h" ? [x+i,y] : [x,y-i]); return c; }
+function inside(c){ return c.every(([x,y]) => x>=-N && x<=N && y>=-N && y<=N); }
+function free(pl, c, skip){
+  const occ = new Set();
+  pl.ships.forEach((s,i) => { if(i!==skip && s.cells) s.cells.forEach(([x,y]) => occ.add(key(x,y))); });
+  return c.every(([x,y]) => !occ.has(key(x,y)));
+}
+function shipAt(pl,x,y){ return pl.ships.find(s => s.cells && s.cells.some(([a,b]) => a===x && b===y)); }
+
+// ---------- Brett zeichnen ----------
+function board(o){
+  const W = O*2;
+  let s = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=-N;i<=N;i++){
+    s += `<line class="g" x1="${px(i)}" y1="${py(N)}" x2="${px(i)}" y2="${py(-N)}"/>`;
+    s += `<line class="g" x1="${px(-N)}" y1="${py(i)}" x2="${px(N)}" y2="${py(i)}"/>`;
+  }
+  const e = px(N)+22, t = py(N)-22;
+  s += `<line class="ax" x1="${px(-N)-14}" y1="${O}" x2="${e}" y2="${O}"/><path d="M${e+8} ${O} L${e-2} ${O-5} L${e-2} ${O+5}Z" fill="#1b2733"/>`;
+  s += `<line class="ax" x1="${O}" y1="${py(-N)+14}" x2="${O}" y2="${t}"/><path d="M${O} ${t-8} L${O-5} ${t+2} L${O+5} ${t+2}Z" fill="#1b2733"/>`;
+  s += `<text class="axn" x="${e+2}" y="${O+20}">x</text><text class="axn" x="${O+10}" y="${t-1}">y</text>`;
+  for(let i=-N;i<=N;i++){
+    if(i===0) continue;
+    s += `<line class="ax" x1="${px(i)}" y1="${O-3}" x2="${px(i)}" y2="${O+3}" style="stroke-width:1.2"/>`;
+    s += `<line class="ax" x1="${O-3}" y1="${py(i)}" x2="${O+3}" y2="${py(i)}" style="stroke-width:1.2"/>`;
+    s += `<text class="lbl" x="${px(i)}" y="${O+15}" text-anchor="middle">${fmt(i)}</text>`;
+    s += `<text class="lbl" x="${O-6}" y="${py(i)+4}" text-anchor="end">${fmt(i)}</text>`;
+  }
+  s += `<text class="lbl" x="${O-6}" y="${O+15}" text-anchor="end">0</text>`;
+  for(let x=-N;x<=N;x++) for(let y=-N;y<=N;y++) s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="1.8"/>`;
+
+  const capsule = (cells, fill, op, stroke) => {
+    const xs = cells.map(c=>px(c[0])), ys = cells.map(c=>py(c[1]));
+    const x0=Math.min(...xs)-10, y0=Math.min(...ys)-10, w=Math.max(...xs)-Math.min(...xs)+20, h=Math.max(...ys)-Math.min(...ys)+20;
+    return `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="10" fill="${fill}" fill-opacity="${op}" stroke="${stroke}" stroke-width="1.6"/>`;
+  };
+  (o.ships||[]).forEach(sh => { if(!sh.cells) return;
+    s += capsule(sh.cells, sh.col, sh.faded ? .55 : (sh.sel ? 1 : .85), sh.sel ? "#e2a93b" : "#1b2733");
+    const [ex,ey] = sh.cells[0], h = sh.cells.length>1 && sh.cells[1][1]===ey;
+    s += `<circle cx="${px(ex)+(h?-2:0)}" cy="${py(ey)+(h?-3:-2)}" r="2.2" fill="#fff"/><circle cx="${px(ex)+(h?-2:0)}" cy="${py(ey)+(h?-3:-2)}" r="1" fill="#1b2733"/>`; });
+  if(o.preview) s += capsule(o.preview.cells, o.preview.ok ? "#2f6b46" : "#b8321f", .35, o.preview.ok ? "#2f6b46" : "#b8321f");
+
+  Object.entries(o.shots||{}).forEach(([k,v]) => {
+    const [x,y] = k.split(",").map(Number), cx=px(x), cy=py(y);
+    if(v==="hit") s += `<path d="M${cx} ${cy-8}L${cx+8} ${cy}L${cx} ${cy+8}L${cx-8} ${cy}Z" fill="#0f6e64" stroke="#fff" stroke-width="1.5"/>`;
+    else s += `<circle cx="${cx}" cy="${cy}" r="5" fill="#f4fafa" fill-opacity=".85" stroke="#12303a" stroke-width="1.4"/>`;
+  });
+  if(o.last){ s += `<circle cx="${px(o.last[0])}" cy="${py(o.last[1])}" r="11" fill="none" stroke="#e2a93b" stroke-width="2.5"/>`; }
+  if(o.pick){
+    for(let x=-N;x<=N;x++) for(let y=-N;y<=N;y++)
+      s += `<circle class="hitarea" data-x="${x}" data-y="${y}" cx="${px(x)}" cy="${py(y)}" r="13"><title>${pt(x,y)}</title></circle>`;
+  }
+  return s + "</svg>";
+}
+
+// ---------- Start ----------
+$("go").onclick = () => {
+  opt = {bonus: $("optBonus").checked, click: $("optClick").checked};
+  P = [newPlayer($("n1").value.trim() || "Spieler 1"), newPlayer($("n2").value.trim() || "Spieler 2")];
+  cur = 0; updScore();
+  cover(0, "Tiere verstecken:", () => startSetup(0));
+};
+function updScore(){ $("score").innerHTML = P ? `<span class="t">Expeditionen gewonnen</span>${P[0].name} <b>${wins[0]}</b> : <b>${wins[1]}</b> ${P[1].name}` : ""; }
+
+function cover(i, pre, fn){
+  $("coverPre").textContent = pre; $("coverName").textContent = P[i].name;
+  afterCover = fn; show("sCover");
+}
+$("coverGo").onclick = () => afterCover();
+
+// ---------- Platzieren ----------
+let hover = null;
+function startSetup(i){ cur = i; sel = 0; dir = "h"; hover = null; $("setupWho").textContent = P[i].name; $("rot").textContent = "Drehen: waagrecht"; drawSetup(); show("sSetup"); }
+function drawSetup(){
+  const pl = P[cur];
+  let preview = null;
+  if(hover && sel !== null){
+    const c = cellsFor(pl.ships[sel].len, hover[0], hover[1], dir);
+    const vis = c.filter(([x,y]) => x>=-N && x<=N && y>=-N && y<=N);
+    preview = {cells: vis.length ? vis : c, ok: inside(c) && free(pl, c, sel)};
+  }
+  $("setupBoard").innerHTML = board({ships: pl.ships.map((s,i)=>({...s, sel:i===sel})), preview, pick:true});
+  $("setupFleet").innerHTML = pl.ships.map((s,i) =>
+    `<li data-i="${i}" class="${i===sel?"sel ":""}${s.cells?"done":""}"><span class="boxes">${`<i style="background:${s.col}"></i>`.repeat(s.len)}</span><span class="nm">${s.name}</span><span class="st">${s.cells ? "ab " + pt(...s.cells[0]) : "offen"}</span></li>`).join("");
+  $("setupDone").disabled = !pl.ships.every(s => s.cells);
+}
+$("setupFleet").onclick = e => { const li = e.target.closest("li"); if(!li) return; sel = +li.dataset.i; drawSetup(); };
+$("setupBoard").addEventListener("mouseover", e => { const h = e.target.closest(".hitarea"); if(!h) return;
+  const x = +h.dataset.x, y = +h.dataset.y;
+  if(hover && hover[0]===x && hover[1]===y) return;
+  hover = [x,y]; drawSetup(); });
+$("setupBoard").addEventListener("mouseleave", () => { if(!hover) return; hover = null; drawSetup(); });
+$("setupBoard").addEventListener("click", e => {
+  const h = e.target.closest(".hitarea"); if(!h) return;
+  const x = +h.dataset.x, y = +h.dataset.y, pl = P[cur];
+  if(sel === null){
+    const s = shipAt(pl,x,y); if(s){ sel = pl.ships.indexOf(s); drawSetup(); }
+    return;
+  }
+  const c = cellsFor(pl.ships[sel].len, x, y, dir);
+  if(!inside(c)){ $("setupMsg").textContent = "Das Tier schwimmt über den Rand hinaus."; return; }
+  if(!free(pl,c,sel)){ $("setupMsg").textContent = "Dort ist schon ein Tier."; return; }
+  pl.ships[sel].cells = c;
+  $("setupMsg").textContent = `${pl.ships[sel].name} schwimmt von ${pt(...c[0])} bis ${pt(...c[c.length-1])}.`;
+  const nx = pl.ships.findIndex(s => !s.cells); sel = nx === -1 ? null : nx;
+  drawSetup();
+});
+$("rot").onclick = () => { dir = dir==="h" ? "v" : "h"; $("rot").textContent = "Drehen: " + (dir==="h" ? "waagrecht" : "senkrecht"); drawSetup(); };
+document.addEventListener("keydown", e => { if($("sSetup").classList.contains("on") && (e.key==="r"||e.key==="R")) $("rot").click(); });
+$("rnd").onclick = () => {
+  const pl = P[cur]; pl.ships.forEach(s => s.cells = null);
+  pl.ships.forEach((s,i) => {
+    for(let t=0;t<500;t++){
+      const d = Math.random()<.5 ? "h" : "v";
+      const x = Math.floor(Math.random()*15)-N, y = Math.floor(Math.random()*15)-N;
+      const c = cellsFor(s.len,x,y,d);
+      if(inside(c) && free(pl,c,i)){ s.cells = c; break; }
+    }
+  });
+  sel = null; $("setupMsg").textContent = "Zufällig verteilt. Du kannst einzelne Tiere in der Liste anwählen und neu setzen."; drawSetup();
+};
+$("clr").onclick = () => { P[cur].ships.forEach(s => s.cells = null); sel = 0; $("setupMsg").textContent = "Startpunkt wählen."; drawSetup(); };
+$("setupDone").onclick = () => {
+  if(cur === 0) cover(1, "Tiere verstecken:", () => startSetup(1));
+  else cover(0, "Das Spiel beginnt mit", () => startTurn(0));
+};
+
+// ---------- Spiel ----------
+let locked = false, last = null;
+function startTurn(i){
+  cur = i; locked = false; last = null;
+  $("ix").value = ""; $("iy").value = "";
+  $("next").hidden = true; $("fire").disabled = false;
+  setMsg(`Wo willst du tauchen? Gib x und y ein.`, "");
+  drawPlay(); show("sPlay"); $("ix").focus();
+}
+function setMsg(t, cls){ const m = $("playMsg"); m.innerHTML = t; m.className = "msg " + (cls||""); }
+function drawPlay(){
+  const me = P[cur], op = P[1-cur];
+  $("playWho").textContent = me.name + " taucht";
+  $("playSub").textContent = "Du suchst die Tiere von " + op.name;
+  const sunk = op.ships.filter(s => s.hits === s.len).map(s => ({...s, faded:true}));
+  const tb = $("targetBoard");
+  tb.innerHTML = board({ships: sunk, shots: me.shots, last, pick: opt.click && !locked});
+  tb.classList.toggle("nopick", !opt.click);
+  $("ownBoard").innerHTML = board({ships: me.ships, shots: op.shots});
+  $("enemyFleet").innerHTML = op.ships.map(s =>
+    `<li class="${s.hits===s.len?"sunk":""}"><span class="boxes">${`<i style="background:${s.col}"></i>`.repeat(s.len)}</span><span class="nm">${s.name}</span><span class="st">${s.hits===s.len?"ganz entdeckt":""}</span></li>`).join("");
+  const all = [];
+  P.forEach((p,pi) => p.log.forEach(l => all.push({...l, who:p.name})));
+  all.sort((a,b) => b.t - a.t);
+  $("log").innerHTML = all.map(l => `<li><span class="who">${l.who}</span><span>${l.c}</span><span class="${l.hit?"h":""}">${l.r}</span></li>`).join("") || `<li><span class="who">noch keine</span></li>`;
+}
+$("targetBoard").addEventListener("click", e => {
+  if(!opt.click || locked) return;
+  const h = e.target.closest(".hitarea"); if(!h) return;
+  $("ix").value = h.dataset.x; $("iy").value = h.dataset.y; $("fire").focus();
+});
+document.querySelectorAll(".sg").forEach(b => b.onclick = () => {
+  const inp = $(b.dataset.for); let v = inp.value.trim().replace("−","-");
+  inp.value = v.startsWith("-") ? v.slice(1) : "-" + v;
+  inp.focus();
+});
+["ix","iy"].forEach(id => $(id).addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); if(id==="ix") $("iy").focus(); else $("fire").click(); }
+}));
+function readNum(id){
+  const raw = $(id).value.trim().replace("−","-").replace("+","");
+  return /^-?\d+$/.test(raw) ? parseInt(raw,10) : NaN;
+}
+$("fire").onclick = () => {
+  if(locked) return;
+  const x = readNum("ix"), y = readNum("iy");
+  if(isNaN(x) || isNaN(y)){ setMsg("Bitte für x und y je eine ganze Zahl eingeben.", "err"); return; }
+  if(Math.abs(x) > N || Math.abs(y) > N){ setMsg(`${pt(x,y)} liegt ausserhalb. Erlaubt sind Werte von −7 bis 7.`, "err"); return; }
+  const me = P[cur], op = P[1-cur], k = key(x,y);
+  if(me.shots[k]){ setMsg(`Bei ${pt(x,y)} warst du schon tauchen.`, "err"); return; }
+  const s = shipAt(op,x,y);
+  last = [x,y];
+  if(s){
+    me.shots[k] = "hit"; s.hits++;
+    const sunk = s.hits === s.len;
+    me.log.push({c:pt(x,y), r: sunk ? "ganz entdeckt" : "gesichtet", hit:true, t:Date.now()});
+    if(op.ships.every(z => z.hits === z.len)){ drawPlay(); return endGame(); }
+    if(sunk) setMsg(`<b>${pt(x,y)}: Ganz entdeckt!</b> Du hast ${s.art} ${s.name} von ${op.name} vollständig dokumentiert.`, "hit");
+    else setMsg(`<b>${pt(x,y)}: Gesichtet!</b> Hier schwimmt etwas.`, "hit");
+    if(opt.bonus){ $("playMsg").innerHTML += " Du darfst nochmals tauchen."; $("ix").value=""; $("iy").value=""; drawPlay(); $("ix").focus(); return; }
+  } else {
+    me.shots[k] = "miss";
+    me.log.push({c:pt(x,y), r:"nur Wasser", hit:false, t:Date.now()});
+    setMsg(`${pt(x,y)}: Nur Wasser, hier ist kein Tier.`, "");
+  }
+  locked = true; $("fire").disabled = true;
+  $("next").hidden = false; $("next").textContent = "Weiter: Gerät an " + op.name + " geben";
+  drawPlay();
+};
+$("next").onclick = () => { const n = 1-cur; cover(n, "Gib das Gerät weiter an", () => startTurn(n)); };
+
+function endGame(){
+  const me = P[cur]; wins[cur]++; updScore();
+  const shots = Object.keys(me.shots).length, hits = Object.values(me.shots).filter(v=>v==="hit").length;
+  $("winner").textContent = me.name + " hat alle Tiere gefunden";
+  $("endStats").textContent = `${shots} Tauchgänge, davon ${hits} Sichtungen.`;
+  $("endBoards").innerHTML = P.map((p,i) =>
+    `<div><div class="hint">${p.name}</div><div class="board nopick">${board({ships:p.ships, shots:P[1-i].shots})}</div></div>`).join("");
+  show("sEnd");
+}
+$("again").onclick = () => show("sStart");
+})();
+</script>
+</body>
+</html>

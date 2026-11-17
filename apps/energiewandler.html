@@ -1,0 +1,347 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Energiewandler-Werkstatt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: Werkstatt. Oben Musterketten aus dem Dossier, dann die Ketten-Werkbank (Auswahl links, Diagramm rechts), dann Solarauto und Effizienz. Blaue und rote Pfeile wie im Dossier als einziges Schmuckelement. */
+:root{
+  --bg:#eef0ea; --paper:#fbfcf8; --ink:#1d2420; --muted:#5d675f; --line:#cdd3c9;
+  --accent:#2f6b4f; --accent-soft:#dcebe2;
+  --ok:#2f7a45; --okbg:#e2f2e6; --bad:#a3442e; --badbg:#f8e6df;
+  --blue:#25a0dc; --red:#e7795c; --sun:#ecd925; --sunink:#222;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151a17; --paper:#1d2420; --ink:#e9eee8; --muted:#a3ada5; --line:#38423b;
+  --accent:#7cc39d; --accent-soft:#25382d; --ok:#7fd096; --okbg:#1f3526; --bad:#f09a82; --badbg:#3a2420;
+  --blue:#2b93c9; --red:#d8694d; --sun:#e2cf2a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151a17; --paper:#1d2420; --ink:#e9eee8; --muted:#a3ada5; --line:#38423b;
+  --accent:#7cc39d; --accent-soft:#25382d; --ok:#7fd096; --okbg:#1f3526; --bad:#f09a82; --badbg:#3a2420;
+  --blue:#2b93c9; --red:#d8694d; --sun:#e2cf2a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h2{font-size:1.6rem;margin-bottom:6px}
+p{margin:0}
+button,select{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+header{display:grid;gap:12px}
+.lead{max-width:70ch;color:var(--muted)}
+.rules{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:.92rem}
+.rules span{display:flex;align-items:center;gap:8px}
+.sw{width:30px;height:12px;clip-path:polygon(0 0,75% 0,100% 50%,75% 100%,0 100%)}
+.circ{width:16px;height:16px;border-radius:50%;background:var(--sun)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px}
+.sub{color:var(--muted);max-width:70ch;margin-bottom:14px}
+.examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.ex h3{font-size:1.1rem;margin-bottom:4px}
+.ex p{font-size:.9rem;color:var(--muted)}
+.diagram{width:100%;height:auto;display:block}
+.diagram text{font-family:var(--body);font-weight:700}
+
+/* Werkbank */
+.bench{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.bench{grid-template-columns:1fr}}
+.picker{display:grid;gap:6px}
+@media (max-width:820px){.picker{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}
+.pick{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:1.5px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:700}
+.pick[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.pick small{font-weight:400;font-size:.75rem;border-radius:999px;padding:1px 7px;background:var(--okbg);color:var(--ok)}
+.work{display:grid;gap:14px;min-width:0}
+.scene{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.95rem}
+.groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.groups{grid-template-columns:1fr}}
+.grp{border-radius:10px;padding:10px;border:2px solid var(--line)}
+.grp.in,.grp.want{border-color:var(--blue)}
+.grp.unw{border-color:var(--red)}
+.glbl{font-family:var(--display);font-weight:700;margin-bottom:8px;font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 10px;font-size:.84rem;cursor:pointer}
+.grp.in .chip[aria-pressed="true"],.grp.want .chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.grp.unw .chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;background:var(--accent-soft)}
+.btn.primary{background:var(--accent);color:var(--paper)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line)}
+.fb{border-radius:8px;padding:10px 12px;font-size:.93rem}
+.fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}.fb.info{background:var(--accent-soft)}
+.fb strong{display:block}
+.fb.ok strong{color:var(--ok)}.fb.bad strong{color:var(--bad)}
+.progress{font-size:.9rem;color:var(--muted)}
+.progress b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* Solarauto */
+.solar{display:grid;gap:14px}
+.slots{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.slot{display:grid;gap:4px}
+.slot label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.slot select{border:2px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--paper);max-width:100%}
+.slot.a select{border-color:var(--blue)}.slot.r select{border-color:var(--red)}.slot.w select{border-color:var(--sun);border-radius:999px}
+.slot select.good{background:var(--okbg)}.slot select.wrong{background:var(--badbg)}
+.arrowsep{color:var(--muted);font-weight:700}
+.unwrow{display:flex;flex-wrap:wrap;gap:12px}
+
+/* Effizienz */
+.eff{display:grid;gap:12px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;cursor:pointer;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.note{font-size:.85rem;color:var(--muted)}
+.bar{display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:.78rem;font-weight:700;color:#fff;max-width:640px}
+.bar span{display:grid;place-items:center;transition:flex-basis .4s}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;font-size:.9rem}
+.legend-row b{font-variant-numeric:tabular-nums}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Natur und Technik 7 · K5 Energie erkunden · LZ2 und LZ3</div>
+    <h1>Energiewandler-Werkstatt</h1>
+    <p class="lead">Energie wird nicht von allein umgewandelt. Dazu braucht es einen Energiewandler: ein Gerät, eine Maschine oder ein Lebewesen. Mit einer Energieumwandlungskette zeigst du, welche Energie hineingeht und was daraus wird.</p>
+    <div class="rules">
+      <span><i class="circ"></i>Kreis: Energiewandler</span>
+      <span><i class="sw" style="background:var(--blue)"></i>Blau: Energie vorher und erwünschte Energie nachher</span>
+      <span><i class="sw" style="background:var(--red)"></i>Rot: unerwünschte Energie (Energieentwertung)</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>So sieht eine Kette aus</h2>
+    <p class="sub">Zwei Beispiele aus dem Dossier. Achte darauf, dass bei beiden ein roter Pfeil vorkommt.</p>
+    <div class="examples">
+      <div class="panel ex"><h3>Elektromotor des Kettenantriebs</h3><div id="ex1"></div><p>Der Motor zieht den Achterbahnwagen hoch. Er wird dabei warm und brummt: Das nützt niemandem.</p></div>
+      <div class="panel ex"><h3>Leuchtkäfer</h3><div id="ex2"></div><p>Einer der besten Energiewandler der Natur: Bis zu 95 % der chemischen Energie werden zu Licht.</p></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Ketten selber bauen</h2>
+    <p class="sub">Wähle einen Energiewandler. Tippe dann in jedem Feld die passenden Energieformen an. Das Diagramm wächst mit. Mehrere Formen pro Feld sind möglich.</p>
+    <div class="bench">
+      <div>
+        <div class="picker" id="picker"></div>
+        <p class="progress" style="margin-top:10px">Gelöst: <b id="solved">0</b> von <b id="ntot">0</b></p>
+      </div>
+      <div class="work">
+        <div class="scene" id="scene"></div>
+        <div id="chain"></div>
+        <div class="groups">
+          <div class="grp in"><div class="glbl">Energie vorher</div><div class="chips" data-g="in"></div></div>
+          <div class="grp want"><div class="glbl">Erwünscht nachher</div><div class="chips" data-g="want"></div></div>
+          <div class="grp unw"><div class="glbl">Unerwünscht nachher</div><div class="chips" data-g="unw"></div></div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="check">Prüfen</button>
+          <button class="btn ghost" id="hint">Tipp</button>
+          <button class="btn ghost" id="sol">Lösung zeigen</button>
+          <button class="btn ghost" id="clear">Leeren</button>
+        </div>
+        <div id="fb" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel solar">
+    <div>
+      <h2>Das Solarauto</h2>
+      <p class="sub">Im Solarauto arbeiten zwei Energiewandler hintereinander. Baue die vollständige Kette: Was geht hinein, wer wandelt um, was kommt heraus, und wo entsteht Unerwünschtes?</p>
+    </div>
+    <div class="slots" id="slots"></div>
+    <div class="unwrow" id="unwslots"></div>
+    <div id="solarchain"></div>
+    <div class="row"><button class="btn primary" id="scheck">Prüfen</button><button class="btn ghost" id="ssol">Lösung zeigen</button></div>
+    <div id="sfb" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel eff">
+    <div>
+      <h2>Wie effizient ist der Wandler?</h2>
+      <p class="sub">Ein Energiewandler ist effizient, wenn möglichst viel Energie in die erwünschte Form umgewandelt wird. Die Pfeilbreite zeigt, wie viel Energie wohin geht. Vergleiche die Lampen mit dem Leuchtkäfer.</p>
+    </div>
+    <div class="seg" id="seg"></div>
+    <div id="effchain"></div>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+    <div class="legend-row" id="efftext"></div>
+    <p class="note">Werte für die Lampen sind gerundete Richtwerte. Wichtig ist der Vergleich: Die Gesamtenergie bleibt immer 100 %, nur die Aufteilung ändert sich.</p>
+  </section>
+</div>
+
+<script>
+const FORMS={L:'Lageenergie',B:'Bewegungsenergie',SP:'Spannenergie',S:'Strahlungsenergie',E:'Elektrische Energie',T:'Thermische Energie',C:'Chemische Energie',SC:'Schallenergie'};
+const FK=Object.keys(FORMS);
+
+/* ---------- Diagramm ---------- */
+function arrowPoly(x,y,len,h){const head=Math.min(22,len*.35);return `${x},${y-h/2} ${x+len-head},${y-h/2} ${x+len-head},${y-h/2-6} ${x+len},${y} ${x+len-head},${y+h/2+6} ${x+len-head},${y+h/2} ${x},${y+h/2}`}
+function arrow(x,y,len,h,col,label,rot){
+  const t=label?`<text x="${x+len/2-6}" y="${y+5}" text-anchor="middle" font-size="${h<20?11:13}" fill="#fff">${label}</text>`:'';
+  return `<g ${rot?`transform="rotate(${rot} ${x} ${y})"`:''}><polygon points="${arrowPoly(x,y,len,h)}" fill="${col}"/>${t}</g>`;
+}
+/* chain({ins:[{f,h}], name, want:[{f,h}], unw:[{f,h}]}) */
+function chain(o){
+  const W=640,cx=320,r=54;
+  const ins=o.ins||[],want=o.want||[],unw=o.unw||[];
+  const rows=Math.max(ins.length,want.length,1);
+  const cy=40+rows*22;let H=cy+r+20;
+  unw.forEach((a,i)=>{const ang=(28+i*20)*Math.PI/180;H=Math.max(H,cy+Math.sin(ang)*(r-8+210)+30)});
+  let s=`<svg class="diagram" viewBox="0 0 ${W} ${Math.max(H,cy+r+20)}" role="img" aria-label="Energieumwandlungskette ${o.name}">`;
+  const stack=(arr,fn)=>arr.forEach((a,i)=>{const y=cy+(i-(arr.length-1)/2)*44;s+=fn(a,y)});
+  stack(ins,(a,y)=>arrow(16,y,cx-r-16+10,a.h||30,'var(--blue)',FORMS[a.f]));
+  stack(want,(a,y)=>arrow(cx+r-10,y,W-16-(cx+r-10),a.h||30,'var(--blue)',FORMS[a.f]));
+  unw.forEach((a,i)=>{const ang=28+i*20;const rad=ang*Math.PI/180;const x=cx+Math.cos(rad)*(r-8),y=cy+Math.sin(rad)*(r-8);
+    s+=arrow(x,y,210,a.h||26,'var(--red)',FORMS[a.f],ang)});
+  if(!ins.length)s+=`<text x="${(cx-r)/2}" y="${cy+5}" text-anchor="middle" font-size="13" fill="var(--muted)">Energie vorher?</text>`;
+  if(!want.length)s+=`<text x="${cx+r+(W-cx-r)/2}" y="${cy+5}" text-anchor="middle" font-size="13" fill="var(--muted)">Erwünscht nachher?</text>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--sun)"/>`;
+  const words=o.name.split(' ');const lines=words.length>1?words:(o.name.length>11?[o.name.slice(0,Math.ceil(o.name.length/2))+'-',o.name.slice(Math.ceil(o.name.length/2))]:[o.name]);
+  lines.forEach((l,i)=>s+=`<text x="${cx}" y="${cy+5+(i-(lines.length-1)/2)*16}" text-anchor="middle" font-size="14" fill="var(--sunink)">${l}</text>`);
+  return s+'</svg>';
+}
+const m=a=>a.map(f=>({f}));
+
+document.getElementById('ex1').innerHTML=chain({name:'Elektromotor',ins:m(['E']),want:m(['B']),unw:m(['SC','T'])});
+document.getElementById('ex2').innerHTML=chain({name:'Leuchtkäfer',ins:m(['C']),want:m(['S']),unw:m(['T'])});
+
+/* ---------- Werkbank ---------- */
+const W=[
+ {n:'Geschirrspüler',sc:'Der Geschirrspüler pumpt Wasser durch die Sprüharme und heizt es auf. Dabei rauscht und brummt er.',
+  in:{r:['E']},want:{r:['B','T']},unw:{r:['SC'],o:['T']},
+  h:'Er läuft am Strom. Er soll Wasser bewegen und erwärmen. Was hörst du, wenn er läuft?',
+  ok:'Elektrische Energie wird zu Bewegungsenergie (Pumpe) und thermischer Energie (heisses Wasser). Das Geräusch ist unerwünschte Schallenergie.'},
+ {n:'Akkuladegerät',sc:'Das Ladegerät steckt in der Steckdose und lädt einen Akku auf. Nach einer Weile ist es warm.',
+  in:{r:['E']},want:{r:['C'],o:['E']},unw:{r:['T']},
+  h:'Im Akku wird die Energie gespeichert. In welcher Form speichert eine Batterie Energie?',
+  ok:'Elektrische Energie wird im Akku als chemische Energie gespeichert. Die Wärme des Ladegeräts ist unerwünscht.'},
+ {n:'Ski',sc:'Eine Skirennfahrerin fährt den Hang hinunter. Die Ski kratzen über den Schnee.',
+  in:{r:['L'],o:['C']},want:{r:['B']},unw:{r:['T'],o:['SC']},
+  h:'Oben am Hang ist sie hoch gelagert. Unten ist sie schnell. Was passiert durch die Reibung der Ski auf dem Schnee?',
+  ok:'Lageenergie wird zu Bewegungsenergie. Durch Reibung entsteht unerwünschte thermische Energie, dazu etwas Schallenergie.'},
+ {n:'Sportler',sc:'Ein Radrennfahrer isst einen Riegel und tritt kräftig in die Pedale. Er schwitzt.',
+  in:{r:['C']},want:{r:['B']},unw:{r:['T'],o:['SC']},
+  h:'Woher hat der Körper seine Energie? Und warum schwitzt man beim Sport?',
+  ok:'Chemische Energie aus der Nahrung wird zu Bewegungsenergie. Ein grosser Teil wird zu thermischer Energie: deshalb schwitzt er.'},
+ {n:'Feuer',sc:'Im Grill brennt Holzkohle. Darüber brät eine Wurst.',
+  in:{r:['C']},want:{r:['T'],o:['S']},unw:{r:[],o:['S','T']},
+  h:'Die Holzkohle ist ein Energieträger. Was willst du beim Grillieren? Und was siehst du ausserdem?',
+  ok:'Chemische Energie wird zu thermischer Energie und Strahlungsenergie (Licht). Beim Grillieren ist die Wärme erwünscht. Wärme, die einfach nach oben in die Luft geht, ist eigentlich unerwünscht.',
+  extraOk:true},
+ {n:'Windrad',sc:'Der Wind dreht die Rotorblätter. Im Turm sitzt ein Generator. Man hört ein Rauschen.',
+  in:{r:['B']},want:{r:['E']},unw:{r:['T'],o:['SC']},
+  h:'Wind ist bewegte Luft. Wozu baut man Windräder? Denk auch an Reibung im Getriebe und an das Rauschen.',
+  ok:'Bewegungsenergie des Windes wird zu elektrischer Energie. Reibung erzeugt unerwünschte thermische Energie, die Rotoren unerwünschte Schallenergie.'},
+ {n:'Glühlampe',sc:'Eine alte Glühlampe leuchtet. Wenn du sie berührst, verbrennst du dich fast.',
+  in:{r:['E']},want:{r:['S']},unw:{r:['T']},
+  h:'Eine Lampe soll Licht spenden, nicht heizen.',
+  ok:'Elektrische Energie wird zu Strahlungsenergie (Licht). Die viele Wärme ist unerwünscht: Die Glühlampe ist wenig effizient.'},
+ {n:'Trampolin',sc:'Ein Kind springt auf dem Trampolin. Das Tuch wird gedehnt und schleudert es wieder hoch.',
+  in:{r:['B']},want:{r:['SP','L'],o:['B']},unw:{r:['T'],o:['SC']},
+  h:'Beim Aufkommen ist das Kind schnell. Das Tuch wird gespannt. Dann fliegt es wieder hoch.',
+  ok:'Bewegungsenergie wird zu Spannenergie des Tuchs und dann wieder zu Lageenergie. Ein Teil wird zu Wärme und Geräusch: deshalb springt man ohne Schwung nie gleich hoch.'}
+];
+let cur=0;const sel=W.map(()=>({in:new Set(),want:new Set(),unw:new Set()}));const done=new Set();
+try{JSON.parse(localStorage.getItem('ew-done')||'[]').forEach(i=>done.add(i))}catch(e){}
+const $=id=>document.getElementById(id);
+$('ntot').textContent=W.length;
+
+function renderPicker(){
+  $('picker').innerHTML=W.map((w,i)=>`<button class="pick" aria-pressed="${i===cur}" data-i="${i}">${w.n}${done.has(i)?'<small>gelöst</small>':''}</button>`).join('');
+  $('solved').textContent=done.size;
+}
+function renderWork(){
+  const w=W[cur],s=sel[cur];
+  $('scene').textContent=w.sc;
+  document.querySelectorAll('.chips[data-g]').forEach(c=>{const g=c.dataset.g;
+    c.innerHTML=FK.map(k=>`<button class="chip" data-k="${k}" aria-pressed="${s[g].has(k)}">${FORMS[k]}</button>`).join('')});
+  const ord=g=>FK.filter(k=>s[g].has(k));
+  $('chain').innerHTML=chain({name:w.n,ins:m(ord('in')),want:m(ord('want')),unw:m(ord('unw'))});
+}
+function setFb(el,html,cls){$(el).innerHTML=html?`<div class="fb ${cls}">${html}</div>`:''}
+
+function check(){
+  const w=W[cur],s=sel[cur],names={in:'«Energie vorher»',want:'«Erwünscht nachher»',unw:'«Unerwünscht nachher»'};
+  if(![...s.in].length||![...s.want].length){setFb('fb','<strong>Noch nicht vollständig.</strong>Jede Kette braucht mindestens einen blauen Pfeil vorher und einen nachher.','bad');return}
+  if(![...s.unw].length){setFb('fb','<strong>Fast.</strong>Es fehlt ein roter Pfeil. Bei fast jeder Umwandlung entsteht auch unerwünschte Energie, meistens thermische Energie.','bad');return}
+  for(const g of ['in','want','unw']){
+    const req=w[g].r||[],opt=w[g].o||[];
+    const miss=req.filter(k=>!s[g].has(k)),extra=[...s[g]].filter(k=>!req.includes(k)&&!opt.includes(k));
+    if(extra.length){setFb('fb',`<strong>Noch nicht ganz.</strong>Im Feld ${names[g]} passt «${FORMS[extra[0]]}» hier nicht.`,'bad');return}
+    if(miss.length){setFb('fb',`<strong>Noch nicht ganz.</strong>Im Feld ${names[g]} fehlt noch etwas.`,'bad');return}
+  }
+  done.add(cur);try{localStorage.setItem('ew-done',JSON.stringify([...done]))}catch(e){}
+  renderPicker();
+  setFb('fb',`<strong>Stimmt.</strong>${w.ok}`,'ok');
+}
+$('picker').addEventListener('click',e=>{const b=e.target.closest('.pick');if(!b)return;cur=+b.dataset.i;renderPicker();renderWork();setFb('fb','')});
+document.querySelector('.groups').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;
+  const g=c.closest('.chips').dataset.g,k=c.dataset.k,st=sel[cur][g];st.has(k)?st.delete(k):st.add(k);renderWork();setFb('fb','')});
+$('check').onclick=check;
+$('hint').onclick=()=>setFb('fb',`<strong>Tipp</strong>${W[cur].h}`,'info');
+$('sol').onclick=()=>{const w=W[cur];sel[cur]={in:new Set(w.in.r),want:new Set(w.want.r),unw:new Set(w.unw.r.length?w.unw.r:w.unw.o.slice(0,1))};renderWork();setFb('fb',`<strong>Lösung</strong>${w.ok}`,'info')};
+$('clear').onclick=()=>{sel[cur]={in:new Set(),want:new Set(),unw:new Set()};renderWork();setFb('fb','')};
+renderPicker();renderWork();
+
+/* ---------- Solarauto ---------- */
+const formOpts=['','S','E','B','C','T','SC','L'];
+const wOpts=['','Solarzelle','Elektromotor','Akku','Räder'];
+const SL=[
+ {id:'a1',k:'a',lbl:'Energie vorher',opts:formOpts,sol:['S']},
+ {id:'w1',k:'w',lbl:'Wandler 1',opts:wOpts,sol:['Solarzelle']},
+ {id:'a2',k:'a',lbl:'dazwischen',opts:formOpts,sol:['E']},
+ {id:'w2',k:'w',lbl:'Wandler 2',opts:wOpts,sol:['Elektromotor']},
+ {id:'a3',k:'a',lbl:'erwünscht am Schluss',opts:formOpts,sol:['B']}
+];
+const SU=[
+ {id:'r1',k:'r',lbl:'unerwünscht bei Wandler 1',opts:formOpts,sol:['T']},
+ {id:'r2',k:'r',lbl:'unerwünscht bei Wandler 2',opts:formOpts,sol:['T','SC']},
+ {id:'r3',k:'r',lbl:'auch noch bei Wandler 2',opts:formOpts,sol:['SC','T','']}
+];
+const optLabel=v=>v===''?'wählen …':(FORMS[v]||v);
+function slotHTML(s){return `<div class="slot ${s.k}"><label for="${s.id}">${s.lbl}</label><select id="${s.id}">${s.opts.map(v=>`<option value="${v}">${optLabel(v)}</option>`).join('')}</select></div>`}
+$('slots').innerHTML=SL.map((s,i)=>slotHTML(s)+(i<SL.length-1?'<span class="arrowsep" aria-hidden="true">→</span>':'')).join('');
+$('unwslots').innerHTML=SU.map(slotHTML).join('');
+function v(id){return $(id).value}
+function renderSolar(){
+  const name1=v('w1')||'Wandler 1',name2=v('w2')||'Wandler 2';
+  const u2=[v('r2'),v('r3')].filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
+  $('solarchain').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">`+
+    chain({name:name1,ins:v('a1')?m([v('a1')]):[],want:v('a2')?m([v('a2')]):[],unw:v('r1')?m([v('r1')]):[]})+
+    chain({name:name2,ins:v('a2')?m([v('a2')]):[],want:v('a3')?m([v('a3')]):[],unw:m(u2)})+`</div>`;
+}
+document.querySelector('.solar').addEventListener('change',()=>{document.querySelectorAll('.solar select').forEach(s=>s.classList.remove('good','wrong'));renderSolar();setFb('sfb','')});
+$('scheck').onclick=()=>{
+  let ok=true;
+  [...SL,...SU].forEach(s=>{const el=$(s.id);const good=s.sol.includes(el.value);if(s.id!=='r3'||el.value)el.classList.add(good?'good':'wrong');if(!good)ok=false});
+  if(v('r2')&&v('r2')===v('r3')){ok=false;$('r3').classList.replace('good','wrong')}
+  setFb('sfb',ok?'<strong>Stimmt.</strong>Die Solarzelle wandelt Strahlungsenergie in elektrische Energie, der Elektromotor diese in Bewegungsenergie. Bei beiden Wandlern entsteht unerwünschte thermische Energie, beim Motor auch Schallenergie. Jeder Wandler entwertet einen Teil der Energie.'
+    :'<strong>Noch nicht ganz.</strong>Die rot markierten Felder stimmen noch nicht. Überlege: Was trifft auf die Solarzelle, was dreht die Räder?',ok?'ok':'bad');
+};
+$('ssol').onclick=()=>{[...SL,...SU].forEach(s=>$(s.id).value=s.sol[0]);$('r3').value='SC';document.querySelectorAll('.solar select').forEach(s=>s.classList.remove('good','wrong'));renderSolar();setFb('sfb','<strong>Lösung</strong>Sonnenlicht → Solarzelle → elektrische Energie → Elektromotor → Bewegungsenergie. Unerwünscht: thermische Energie bei beiden Wandlern, Schallenergie beim Motor.','info')};
+renderSolar();
+
+/* ---------- Effizienz ---------- */
+const EF=[
+ {n:'Glühlampe',in:'E',want:'S',p:5},
+ {n:'Halogenlampe',in:'E',want:'S',p:10},
+ {n:'LED-Lampe',in:'E',want:'S',p:35},
+ {n:'Leuchtkäfer',in:'C',want:'S',p:95}
+];
+let ef=0;
+$('seg').innerHTML=EF.map((e,i)=>`<button data-i="${i}" aria-pressed="${i===0}">${e.n}</button>`).join('');
+function renderEff(){
+  const e=EF[ef];const hw=Math.max(8,e.p*.5),hu=Math.max(8,(100-e.p)*.5);
+  $('effchain').innerHTML=chain({name:e.n,ins:[{f:e.in,h:50}],want:[{f:e.want,h:hw}],unw:[{f:'T',h:hu}]});
+  $('bar').innerHTML=`<span style="flex-basis:${e.p}%;background:var(--blue)">${e.p>=12?e.p+' %':''}</span><span style="flex-basis:${100-e.p}%;background:var(--red)">${100-e.p>=12?(100-e.p)+' %':''}</span>`;
+  $('efftext').innerHTML=`<span>Licht (erwünscht): <b>${e.p} %</b></span><span>Wärme (unerwünscht): <b>${100-e.p} %</b></span><span>Zusammen: <b>100 %</b></span>`;
+  document.querySelectorAll('#seg button').forEach((b,i)=>b.setAttribute('aria-pressed',i===ef));
+}
+$('seg').addEventListener('click',e=>{const b=e.target.closest('button');if(b){ef=+b.dataset.i;renderEff()}});
+renderEff();
+</script>
+
+</body></html>

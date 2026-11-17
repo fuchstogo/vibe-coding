@@ -1,0 +1,676 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Steigung &amp; Geradengleichung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: Heft auf Häuschenpapier. Eine Spalte mit Lernpfad 1–6, jede Station = Grafik links, Erklärung rechts */
+:root{
+  --bg:#f5f7fb; --paper:#ffffff; --ink:#1b2540; --muted:#5b6682; --grid:#dde4f1; --grid-strong:#b9c5dc;
+  --line:#2443c4; --line-soft:#e3e8fb; --dx:#c2410c; --dy:#0d7a72; --tri:rgba(36,67,196,.08);
+  --ok:#157a3c; --ok-bg:#e4f4ea; --bad:#c0262d; --bad-bg:#fbe7e8; --mark:#fff1a8;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-math:"STIX Two Text", "Cambria Math", "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111624; --paper:#192033; --ink:#e7ebf5; --muted:#9aa5c0; --grid:#232c42; --grid-strong:#36415e;
+  --line:#8ea3ff; --line-soft:#252f4d; --dx:#fb923c; --dy:#34d1bf; --tri:rgba(142,163,255,.12);
+  --ok:#5ed38a; --ok-bg:#16301f; --bad:#ff7a80; --bad-bg:#3a1a1e; --mark:#4a4416; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111624; --paper:#192033; --ink:#e7ebf5; --muted:#9aa5c0; --grid:#232c42; --grid-strong:#36415e;
+  --line:#8ea3ff; --line-soft:#252f4d; --dx:#fb923c; --dy:#34d1bf; --tri:rgba(142,163,255,.12);
+  --ok:#5ed38a; --ok-bg:#16301f; --bad:#ff7a80; --bad-bg:#3a1a1e; --mark:#4a4416; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;background-attachment:fixed}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.1;margin:0}
+h1{font-size:clamp(2.1rem,6vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0;max-width:65ch}
+i.v,.m i{font-family:var(--f-math);font-style:italic}
+.m{font-family:var(--f-math);font-size:1.12em;white-space:nowrap}
+.dxc{color:var(--dx);font-weight:700}.dyc{color:var(--dy);font-weight:700}.lc{color:var(--line);font-weight:700}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding:28px;background:var(--paper);border:1px solid var(--grid-strong);border-radius:6px}
+.hero .eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px}
+.hero h1 .amp{color:var(--line)}
+.hero p{margin-top:14px;color:var(--muted)}
+.hero .formula{font-family:var(--f-math);font-size:clamp(1.8rem,5vw,3rem);white-space:nowrap;padding:10px 18px;background:var(--mark);border-radius:4px;transform:rotate(-2deg)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;grid-column:1/-1}
+.toc a{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border:1px solid var(--grid-strong);border-radius:999px;color:var(--ink);text-decoration:none;font-size:.92rem;background:var(--bg)}
+.toc a b{font-family:var(--f-display);color:var(--line)}
+.toc a:hover,.toc a:focus-visible{border-color:var(--line);outline:none}
+
+/* Stationen */
+section.st{background:var(--paper);border:1px solid var(--grid-strong);border-radius:6px;padding:26px;display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px}
+.st-head{display:flex;gap:14px;align-items:baseline}
+.st-num{font-family:var(--f-display);font-weight:800;font-size:1rem;color:var(--paper);background:var(--line);min-width:2rem;height:2rem;border-radius:50%;display:inline-grid;place-items:center;flex:none;transform:translateY(-3px)}
+.st-head p{color:var(--muted);margin-top:6px}
+.cols{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:26px;align-items:start}
+.cols>*{min-width:0}
+@media (max-width:780px){.cols{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero .formula{justify-self:start}}
+.plot{width:100%;max-width:420px;aspect-ratio:1;display:block;background:var(--paper);touch-action:none;user-select:none}
+.plot .gl{stroke:var(--grid);stroke-width:1}
+.plot .ax{stroke:var(--muted);stroke-width:1.6}
+.plot .axh{fill:var(--muted)}
+.plot .tk{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
+.plot .axl{fill:var(--ink);font-family:var(--f-math);font-style:italic;font-size:16px}
+.plot .gline{stroke:var(--line);stroke-width:3;stroke-linecap:round}
+.plot .gline.ghost{stroke-dasharray:6 6;stroke-width:2;opacity:.6}
+.plot .trif{fill:var(--tri)}
+.plot .dxl{stroke:var(--dx);stroke-width:3.5;stroke-linecap:round}
+.plot .dyl{stroke:var(--dy);stroke-width:3.5;stroke-linecap:round}
+.plot .dxt{fill:var(--dx);font-weight:700;font-size:14px;font-family:var(--f-body);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.plot .dyt{fill:var(--dy);font-weight:700;font-size:14px;font-family:var(--f-body);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.plot .pt{fill:var(--paper);stroke:var(--ink);stroke-width:2.5}
+.plot .ptq{fill:var(--line);stroke:var(--paper);stroke-width:2}
+.plot .ptl{fill:var(--ink);font-size:13px;font-weight:700;font-family:var(--f-body);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.plot .handle{cursor:grab;outline:none}
+.plot .handle .hit{fill:transparent}
+.plot .handle .dot{fill:var(--line);stroke:var(--paper);stroke-width:3}
+.plot .handle:focus-visible .dot,.plot .handle:hover .dot{stroke:var(--mark);stroke-width:5}
+.plot-cap{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* Panels, Merke, Steps */
+.panel{display:flex;flex-direction:column;gap:14px}
+.calc{display:flex;flex-direction:column;gap:8px;font-family:var(--f-math);font-size:1.15rem}
+.calc .row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:8px 12px;border-left:3px solid var(--grid-strong);background:var(--bg);border-radius:0 4px 4px 0}
+.calc .row.dx{border-color:var(--dx)}.calc .row.dy{border-color:var(--dy)}.calc .row.m{border-color:var(--line);font-size:1.25rem}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-size:.92em;margin:0 2px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px 1px}
+.frac>span:last-child{padding:1px 3px 0}
+.say{font-size:1rem;padding:12px 14px;background:var(--line-soft);border-radius:4px}
+.merke{border:2px solid var(--ink);border-radius:4px;padding:14px 16px;position:relative;display:flex;flex-direction:column;gap:6px}
+.merke::before{content:"Merke";position:absolute;top:-11px;left:12px;background:var(--paper);padding:0 6px;font-family:var(--f-display);font-weight:800;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:.95rem;font-weight:700;padding:9px 14px;border-radius:4px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer}
+button.pri{background:var(--line);border-color:var(--line);color:var(--paper)}
+button:hover{transform:translateY(-1px)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--line);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.inputs{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pinput{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-math);font-size:1.15rem;padding:6px 10px;border:1px solid var(--grid-strong);border-radius:4px;background:var(--bg)}
+input[type="text"]{font:inherit;font-family:var(--f-body);font-size:1rem;width:4.2em;padding:5px 6px;border:1.5px solid var(--grid-strong);border-radius:4px;background:var(--paper);color:var(--ink);text-align:center}
+input[type="text"]:focus{border-color:var(--line)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2rem 1fr;gap:4px 12px;padding:12px 14px;background:var(--bg);border-radius:4px;animation:pop .3s ease}
+.steps li::before{content:counter(s);grid-row:span 2;font-family:var(--f-display);font-weight:800;width:2rem;height:2rem;border-radius:50%;border:2px solid var(--line);color:var(--line);display:grid;place-items:center}
+.steps li b{font-size:.95rem}
+.steps li .m{font-size:1.15rem;white-space:normal;line-height:1.9}
+@keyframes pop{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}button:hover{transform:none}}
+.progress{font-size:.9rem;color:var(--muted)}
+
+/* Station 3 */
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:780px){.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.four figure{margin:0;display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--grid-strong);border-radius:4px}
+.four figcaption{font-size:.95rem}
+.four figcaption b{display:block;font-family:var(--f-display);font-size:1.05rem}
+.four .plot{max-width:100%}
+
+/* Station 4 */
+.big-eq{font-family:var(--f-math);font-size:clamp(1.7rem,5vw,2.4rem);padding:10px 16px;background:var(--mark);border-radius:4px;align-self:flex-start;white-space:nowrap}
+.big-eq .mv{color:var(--line);font-weight:600}.big-eq .qv{color:var(--dx);font-weight:600}
+.slider{display:grid;grid-template-columns:5.5rem 1fr 3.6rem;gap:10px;align-items:center}
+.slider label{font-family:var(--f-math);font-size:1.15rem}
+.slider output{font-variant-numeric:tabular-nums;font-weight:700;text-align:right}
+input[type="range"]{width:100%;accent-color:var(--line)}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{border:1px solid var(--grid-strong);padding:5px 10px;text-align:center;min-width:2.6rem}
+th{font-family:var(--f-math);font-style:italic;background:var(--bg)}
+
+/* Training */
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.score{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.95rem;align-items:center}
+.score span b{font-family:var(--f-display);font-size:1.25rem;font-variant-numeric:tabular-nums}
+.task{display:flex;flex-direction:column;gap:14px}
+.task .q{font-size:1.1rem}
+.fb{padding:12px 14px;border-radius:4px;display:flex;flex-direction:column;gap:10px}
+.fb.ok{background:var(--ok-bg);color:var(--ink);border-left:4px solid var(--ok)}
+.fb.bad{background:var(--bad-bg);color:var(--ink);border-left:4px solid var(--bad)}
+.fb.hint{background:var(--line-soft);border-left:4px solid var(--line)}
+.fb strong.ok{color:var(--ok)}.fb strong.bad{color:var(--bad)}
+
+/* Spick */
+.spick{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.spick div{padding:14px;border:1px dashed var(--grid-strong);border-radius:4px;display:flex;flex-direction:column;gap:6px}
+.spick .m{white-space:normal}
+footer{color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">Wiederholung · 3. Real · Oberstufe St.Gallen</div>
+    <h1>Steigung <span class="amp">&amp;</span> Geradengleichung</h1>
+    <p>Hier frischst du auf, was du über Geraden schon weisst: Wie steil ist eine Gerade, wie berechnest du die Steigung und wie stellst du die Gleichung auf? Ziehe Punkte, schiebe Regler und rechne Schritt für Schritt mit. Am Schluss kannst du so lange üben, wie du willst.</p>
+  </div>
+  <div class="formula"><i class="v">y</i> = <i class="v">m</i>·<i class="v">x</i> + <i class="v">q</i></div>
+  <nav class="toc" aria-label="Lernpfad">
+    <a href="#s1"><b>1</b> Steigungsdreieck</a>
+    <a href="#s2"><b>2</b> Steigung berechnen</a>
+    <a href="#s3"><b>3</b> Steigung erkennen</a>
+    <a href="#s4"><b>4</b> y = m·x + q</a>
+    <a href="#s5"><b>5</b> Gleichung aus zwei Punkten</a>
+    <a href="#s6"><b>6</b> Training</a>
+    <a href="#spick"><b>✓</b> Spick</a>
+  </nav>
+</header>
+
+<!-- 1 -->
+<section class="st" id="s1">
+  <div class="st-head"><span class="st-num">1</span><div><h2>Das Steigungsdreieck</h2>
+    <p>Die Steigung sagt, wie viel es nach oben (oder unten) geht, wenn du nach rechts gehst. Wie beim Verkehrsschild: 12 % heisst, auf 100 m nach vorne geht es 12 m hoch.</p></div></div>
+  <div class="cols">
+    <div>
+      <svg class="plot" id="p1" role="img" aria-label="Koordinatensystem mit zwei verschiebbaren Punkten A und B"></svg>
+      <div class="plot-cap">Ziehe die blauen Punkte A und B. Mit der Tastatur: Punkt anwählen (Tab) und Pfeiltasten.</div>
+    </div>
+    <div class="panel">
+      <div class="calc" id="c1"></div>
+      <div class="say" id="say1"></div>
+      <div class="btns"><button type="button" id="rnd1">Zufällige Punkte</button></div>
+      <div class="merke">
+        <p>Steigung <span class="m"><i>m</i> = <span class="frac"><span class="dyc">Δ<i>y</i></span><span class="dxc">Δ<i>x</i></span></span> = <span class="frac"><span>Höhenunterschied</span><span>Horizontaler Abstand</span></span></span></p>
+        <p><span class="dxc">Δx</span>: so weit gehst du nach rechts. <span class="dyc">Δy</span>: so weit geht es hoch (positiv) oder runter (negativ).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="st" id="s2">
+  <div class="st-head"><span class="st-num">2</span><div><h2>Steigung aus zwei Punkten berechnen</h2>
+    <p>Du brauchst kein Häuschenpapier: Mit den Koordinaten von zwei Punkten rechnest du die Steigung direkt aus. Gib eigene Punkte ein und lass dir den Weg Schritt für Schritt zeigen.</p></div></div>
+  <div class="cols">
+    <div class="panel">
+      <div class="inputs">
+        <span class="pinput">P<sub>1</sub>( <input type="text" id="c2x1" value="-2" aria-label="x von P1" inputmode="decimal"> | <input type="text" id="c2y1" value="1" aria-label="y von P1" inputmode="decimal"> )</span>
+        <span class="pinput">P<sub>2</sub>( <input type="text" id="c2x2" value="4" aria-label="x von P2" inputmode="decimal"> | <input type="text" id="c2y2" value="-3" aria-label="y von P2" inputmode="decimal"> )</span>
+      </div>
+      <svg class="plot" id="p2" role="img" aria-label="Die zwei Punkte mit Steigungsdreieck"></svg>
+    </div>
+    <div class="panel">
+      <div class="merke"><p class="m"><i>m</i> = <span class="frac"><span><i>y</i><sub>2</sub> − <i>y</i><sub>1</sub></span><span><i>x</i><sub>2</sub> − <i>x</i><sub>1</sub></span></span></p>
+        <p>Wichtig: Oben und unten in der gleichen Reihenfolge subtrahieren (beide Male Punkt 2 minus Punkt 1).</p></div>
+      <div class="btns"><button type="button" class="pri" id="n2">Nächster Schritt</button><button type="button" id="a2">Alle Schritte</button><button type="button" id="r2">Von vorne</button></div>
+      <div class="progress" id="pr2"></div>
+      <ol class="steps" id="st2"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="st" id="s3">
+  <div class="st-head"><span class="st-num">3</span><div><h2>Steigung auf einen Blick erkennen</h2>
+    <p>Lies Geraden immer von links nach rechts, so wie du einen Text liest.</p></div></div>
+  <div class="four" id="four"></div>
+</section>
+
+<!-- 4 -->
+<section class="st" id="s4">
+  <div class="st-head"><span class="st-num">4</span><div><h2>Die Geradengleichung <span class="m" style="font-size:.9em">y = m·x + q</span></h2>
+    <p>Jede schräge oder waagrechte Gerade lässt sich mit zwei Zahlen beschreiben: der Steigung <i class="v">m</i> und dem y‑Achsenabschnitt <i class="v">q</i>. Schiebe die Regler und beobachte, was sich verändert.</p></div></div>
+  <div class="cols">
+    <div>
+      <svg class="plot" id="p4" role="img" aria-label="Gerade mit einstellbarer Steigung und y-Achsenabschnitt"></svg>
+    </div>
+    <div class="panel">
+      <div class="big-eq" id="eq4"></div>
+      <div class="slider"><label for="sm">Steigung <i>m</i></label><input type="range" id="sm" min="-4" max="4" step="0.25" value="0.5"><output id="om" for="sm"></output></div>
+      <div class="slider"><label for="sq">Abschnitt <i>q</i></label><input type="range" id="sq" min="-5" max="5" step="0.5" value="1"><output id="oq" for="sq"></output></div>
+      <div class="btns">
+        <button type="button" data-pre="2,-1">m = 2, q = −1</button>
+        <button type="button" data-pre="-0.5,3">m = −0.5, q = 3</button>
+        <button type="button" data-pre="0,2">m = 0, q = 2</button>
+        <button type="button" data-pre="1,0">m = 1, q = 0</button>
+      </div>
+      <div class="say" id="say4"></div>
+      <div class="tbl-wrap"><table id="t4"></table></div>
+      <div class="merke">
+        <p><b class="lc">m</b> = Steigung: Gehst du 1 nach rechts, geht es um <i class="v">m</i> hoch oder runter.</p>
+        <p><b class="dxc">q</b> = y‑Achsenabschnitt: Dort schneidet die Gerade die y‑Achse, im Punkt (0 | <i class="v">q</i>).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="st" id="s5">
+  <div class="st-head"><span class="st-num">5</span><div><h2>Geradengleichung aus zwei Punkten</h2>
+    <p>Das ist die Königsaufgabe: Du kennst zwei Punkte und suchst die Gleichung. Zuerst rechnest du <i class="v">m</i> aus, dann setzt du einen Punkt ein und löst nach <i class="v">q</i> auf.</p></div></div>
+  <div class="cols">
+    <div class="panel">
+      <div class="inputs">
+        <span class="pinput">P<sub>1</sub>( <input type="text" id="c5x1" value="1" aria-label="x von P1" inputmode="decimal"> | <input type="text" id="c5y1" value="1" aria-label="y von P1" inputmode="decimal"> )</span>
+        <span class="pinput">P<sub>2</sub>( <input type="text" id="c5x2" value="3" aria-label="x von P2" inputmode="decimal"> | <input type="text" id="c5y2" value="5" aria-label="y von P2" inputmode="decimal"> )</span>
+      </div>
+      <svg class="plot" id="p5" role="img" aria-label="Gerade durch zwei Punkte"></svg>
+    </div>
+    <div class="panel">
+      <div class="btns"><button type="button" class="pri" id="n5">Nächster Schritt</button><button type="button" id="a5">Alle Schritte</button><button type="button" id="r5">Von vorne</button></div>
+      <div class="progress" id="pr5"></div>
+      <ol class="steps" id="st5"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="st" id="s6">
+  <div class="st-head"><span class="st-num">6</span><div><h2>Training</h2>
+    <p>Wähle eine Aufgabenart. Brüche schreibst du so: <b>2/3</b> oder <b>-3/4</b>. Dezimalzahlen gehen auch, zum Beispiel <b>-1.5</b>.</p></div></div>
+  <div class="seg" id="seg" role="group" aria-label="Aufgabenart">
+    <button type="button" data-t="mix" aria-pressed="true">Gemischt</button>
+    <button type="button" data-t="ablesen" aria-pressed="false">Steigung ablesen</button>
+    <button type="button" data-t="rechnen" aria-pressed="false">Steigung berechnen</button>
+    <button type="button" data-t="gleichung" aria-pressed="false">Gleichung ablesen</button>
+    <button type="button" data-t="punkte" aria-pressed="false">Gleichung aus zwei Punkten</button>
+  </div>
+  <div class="score" aria-live="polite"><span>Richtig: <b id="sc-ok">0</b> von <b id="sc-all">0</b></span><span>Serie: <b id="sc-str">0</b></span><span id="sc-msg"></span></div>
+  <div class="cols">
+    <div id="tplotwrap"><svg class="plot" id="p6" role="img" aria-label="Gerade zur Aufgabe"></svg></div>
+    <div class="task">
+      <div class="q" id="tq"></div>
+      <form class="inputs" id="tform" autocomplete="off"></form>
+      <div class="btns"><button type="button" class="pri" id="tcheck">Prüfen</button><button type="button" id="thint">Tipp</button><button type="button" id="tnew">Neue Aufgabe</button></div>
+      <div id="tfb" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Spick -->
+<section class="st" id="spick">
+  <div class="st-head"><span class="st-num">✓</span><div><h2>Spick: das Wichtigste</h2></div></div>
+  <div class="spick">
+    <div><h3>Steigung</h3><p class="m"><i>m</i> = <span class="frac"><span>Δ<i>y</i></span><span>Δ<i>x</i></span></span> = <span class="frac"><span><i>y</i><sub>2</sub> − <i>y</i><sub>1</sub></span><span><i>x</i><sub>2</sub> − <i>x</i><sub>1</sub></span></span></p><p>In Prozent: <i class="v">m</i> · 100 %</p></div>
+    <div><h3>Vorzeichen</h3><p><i class="v">m</i> &gt; 0: steigt<br><i class="v">m</i> &lt; 0: fällt<br><i class="v">m</i> = 0: waagrecht<br>senkrecht: keine Steigung</p></div>
+    <div><h3>Gleichung</h3><p class="m"><i>y</i> = <i>m</i>·<i>x</i> + <i>q</i></p><p><i class="v">q</i> = Schnittpunkt mit der y‑Achse (0 | <i class="v">q</i>)</p></div>
+    <div><h3>Aus zwei Punkten</h3><p>1. <i class="v">m</i> berechnen<br>2. Punkt in <i class="v">y</i> = <i class="v">m</i>·<i class="v">x</i> + <i class="v">q</i> einsetzen<br>3. nach <i class="v">q</i> auflösen<br>4. Probe mit dem anderen Punkt</p></div>
+  </div>
+</section>
+
+<footer>Interaktive Lernseite zur Wiederholung linearer Funktionen · 3. Realklasse</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const MIN='−';
+const $=id=>document.getElementById(id);
+
+/* ---------- Brüche ---------- */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+class F{
+  constructor(n,d=1){if(d<0){n=-n;d=-d;}const g=gcd(n,d);this.n=n/g;this.d=d/g;}
+  add(o){return new F(this.n*o.d+o.n*this.d,this.d*o.d);}
+  sub(o){return new F(this.n*o.d-o.n*this.d,this.d*o.d);}
+  mul(o){return new F(this.n*o.n,this.d*o.d);}
+  div(o){return new F(this.n*o.d,this.d*o.n);}
+  neg(){return new F(-this.n,this.d);}
+  eq(o){return this.n===o.n&&this.d===o.d;}
+  get v(){return this.n/this.d;}
+  get isInt(){return this.d===1;}
+  static from(x){const k=10000;return new F(Math.round(x*k),k);}
+}
+function parseNum(s){
+  if(s==null)return null;
+  s=String(s).trim().replace(/[−–]/g,'-').replace(/,/g,'.').replace(/\s+/g,'');
+  if(s==='')return null;
+  let m=s.match(/^(-?\d*\.?\d+)\/(-?\d*\.?\d+)$/);
+  if(m){const a=parseFloat(m[1]),b=parseFloat(m[2]);if(!isFinite(a)||!isFinite(b)||b===0)return null;return F.from(a).div(F.from(b));}
+  if(/^-?\d*\.?\d+$/.test(s))return F.from(parseFloat(s));
+  return null;
+}
+function nStr(v){v=parseFloat(v.toFixed(4));return (v<0?MIN:'')+String(Math.abs(v));}
+function isTerminating(f){let d=f.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1;}
+// Bruch als Text / HTML
+function fT(f){return f.isInt?nStr(f.n):(f.n<0?MIN:'')+Math.abs(f.n)+'/'+f.d;}
+function fH(f){return f.isInt?nStr(f.n):(f.n<0?MIN:'')+`<span class="frac"><span>${Math.abs(f.n)}</span><span>${f.d}</span></span>`;}
+// Koordinate: Dezimal falls endlich, sonst Bruch
+function cH(f){return isTerminating(f)?nStr(f.v):fH(f);}
+function par(html,f){return f.n<0?`(${html})`:html;}
+function approx(f){const v=f.v,r=Math.round(v*100)/100;return (Math.abs(v-r)<1e-9?'= ':'≈ ')+nStr(r);}
+function rawFrac(a,b){return `<span class="frac"><span>${a}</span><span>${b}</span></span>`;}
+function eqH(m,q,fmt=fH){
+  let mx='';
+  if(m.n!==0){mx=(m.n===1&&m.d===1)?'<i>x</i>':(m.n===-1&&m.d===1)?MIN+'<i>x</i>':fmt(m)+'<i>x</i>';}
+  let qs='';
+  if(mx===''){qs=fmt(q);}else if(q.n>0){qs=' + '+fmt(q);}else if(q.n<0){qs=' '+MIN+' '+fmt(q.neg());}
+  return '<i>y</i> = '+mx+qs;
+}
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+/* ---------- Koordinatensystem ---------- */
+let cid=0;
+function plot(svg,{range=5,size=360,ticks=true,tickStep=1}={}){
+  const pad=24,s=(size-2*pad)/(2*range);
+  const X=x=>pad+(x+range)*s,Y=y=>pad+(range-y)*s;
+  const id='clip'+(++cid);
+  let h=`<defs><clipPath id="${id}"><rect x="${pad}" y="${pad}" width="${size-2*pad}" height="${size-2*pad}"/></clipPath></defs>`;
+  for(let i=-range;i<=range;i++){
+    h+=`<line class="gl" x1="${X(i)}" y1="${Y(-range)}" x2="${X(i)}" y2="${Y(range)}"/>`;
+    h+=`<line class="gl" x1="${X(-range)}" y1="${Y(i)}" x2="${X(range)}" y2="${Y(i)}"/>`;
+  }
+  const ex=X(range)+14,ey=Y(range)-14;
+  h+=`<line class="ax" x1="${X(-range)}" y1="${Y(0)}" x2="${ex}" y2="${Y(0)}"/><polygon class="axh" points="${ex+6},${Y(0)} ${ex-4},${Y(0)-5} ${ex-4},${Y(0)+5}"/>`;
+  h+=`<line class="ax" x1="${X(0)}" y1="${Y(-range)}" x2="${X(0)}" y2="${ey}"/><polygon class="axh" points="${X(0)},${ey-6} ${X(0)-5},${ey+4} ${X(0)+5},${ey+4}"/>`;
+  h+=`<text class="axl" x="${ex-2}" y="${Y(0)-9}" text-anchor="end">x</text><text class="axl" x="${X(0)+10}" y="${ey+8}">y</text>`;
+  if(ticks){for(let i=-range;i<=range;i++){if(i===0||i%tickStep)continue;
+    h+=`<text class="tk" x="${X(i)}" y="${Y(0)+15}" text-anchor="middle">${nStr(i)}</text>`;
+    h+=`<text class="tk" x="${X(0)-6}" y="${Y(i)+4}" text-anchor="end">${nStr(i)}</text>`;}
+    h+=`<text class="tk" x="${X(0)-6}" y="${Y(0)+15}" text-anchor="end">0</text>`;}
+  h+=`<g clip-path="url(#${id})" class="lay"></g><g class="top"></g><g class="hand"></g>`;
+  svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
+  svg.innerHTML=h;
+  return {svg,X,Y,s,range,pad,lay:svg.querySelector('.lay'),top:svg.querySelector('.top'),hand:svg.querySelector('.hand'),
+    world(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return{x:(q.x-pad)/s-range,y:range-(q.y-pad)/s};}};
+}
+function lineSVG(P,m,q,cls='gline'){ // m,q Zahlen; m===null => senkrecht bei x=q
+  const R=P.range+2;
+  if(m===null)return `<line class="${cls}" x1="${P.X(q)}" y1="${P.Y(-R)}" x2="${P.X(q)}" y2="${P.Y(R)}"/>`;
+  return `<line class="${cls}" x1="${P.X(-R)}" y1="${P.Y(m*-R+q)}" x2="${P.X(R)}" y2="${P.Y(m*R+q)}"/>`;
+}
+function triSVG(P,A,B,{dxLabel,dyLabel}={}){
+  const dx=B.x-A.x,dy=B.y-A.y,C={x:B.x,y:A.y};
+  let h=`<polygon class="trif" points="${P.X(A.x)},${P.Y(A.y)} ${P.X(C.x)},${P.Y(C.y)} ${P.X(B.x)},${P.Y(B.y)}"/>`;
+  if(dx!==0)h+=`<line class="dxl" x1="${P.X(A.x)}" y1="${P.Y(A.y)}" x2="${P.X(C.x)}" y2="${P.Y(C.y)}"/>`;
+  if(dy!==0)h+=`<line class="dyl" x1="${P.X(C.x)}" y1="${P.Y(C.y)}" x2="${P.X(B.x)}" y2="${P.Y(B.y)}"/>`;
+  let t='';
+  if(dx!==0){const my=P.Y(A.y)+(dy>=0?20:-10);t+=`<text class="dxt" x="${(P.X(A.x)+P.X(C.x))/2}" y="${my}" text-anchor="middle">${dxLabel??'Δx = '+nStr(dx)}</text>`;}
+  if(dy!==0){const right=dx>=0?P.X(C.x)<P.X(P.range)-70:P.X(C.x)<P.X(-P.range)+70;const mx=P.X(C.x)+(right?8:-8);t+=`<text class="dyt" x="${mx}" y="${(P.Y(C.y)+P.Y(B.y))/2+5}" text-anchor="${right?'start':'end'}">${dyLabel??'Δy = '+nStr(dy)}</text>`;}
+  return {lay:h,top:t};
+}
+function ptSVG(P,p,label,below){
+  return `<circle class="pt" cx="${P.X(p.x)}" cy="${P.Y(p.y)}" r="6"/><text class="ptl" x="${P.X(p.x)+9}" y="${P.Y(p.y)+(below?18:-9)}">${label}</text>`;
+}
+
+/* ---------- 1 Steigungsdreieck ---------- */
+(function(){
+  const P=plot($('p1'));
+  const pts={A:{x:-3,y:-1},B:{x:2,y:2}};
+  P.hand.innerHTML=['A','B'].map(k=>`<g class="handle" data-p="${k}" tabindex="0" role="slider" aria-label="Punkt ${k}"><circle class="hit" r="20"/><circle class="dot" r="9"/><text class="ptl" x="12" y="-12"></text></g>`).join('');
+  const H={A:P.hand.querySelector('[data-p=A]'),B:P.hand.querySelector('[data-p=B]')};
+  function draw(){
+    const {A,B}=pts,dx=B.x-A.x,dy=B.y-A.y;
+    let lay='',top='';
+    if(dx===0){lay+=lineSVG(P,null,A.x);}else{const m=dy/dx;lay+=lineSVG(P,m,A.y-m*A.x);const t=triSVG(P,A,B);lay+=t.lay;top+=t.top;}
+    P.lay.innerHTML=lay;P.top.innerHTML=top;
+    for(const k of ['A','B']){const p=pts[k];H[k].setAttribute('transform',`translate(${P.X(p.x)},${P.Y(p.y)})`);
+      H[k].querySelector('text').textContent=`${k}(${nStr(p.x)} | ${nStr(p.y)})`;
+      H[k].setAttribute('aria-valuetext',`${k} bei x ${p.x}, y ${p.y}`);}
+    let c=`<div class="row dx"><span class="dxc">Δ<i>x</i></span> = <i>x</i><sub>B</sub> − <i>x</i><sub>A</sub> = ${nStr(B.x)} − ${A.x<0?'('+nStr(A.x)+')':nStr(A.x)} = <b class="dxc">${nStr(dx)}</b></div>`;
+    c+=`<div class="row dy"><span class="dyc">Δ<i>y</i></span> = <i>y</i><sub>B</sub> − <i>y</i><sub>A</sub> = ${nStr(B.y)} − ${A.y<0?'('+nStr(A.y)+')':nStr(A.y)} = <b class="dyc">${nStr(dy)}</b></div>`;
+    let say;
+    if(dx===0){
+      c+=`<div class="row m"><i>m</i> = ${rawFrac('<span class="dyc">'+nStr(dy)+'</span>','<span class="dxc">0</span>')} → nicht definiert</div>`;
+      say='Δx ist 0. Durch 0 darf man nicht teilen. Die Gerade ist <b>senkrecht</b> und hat keine Steigung.';
+    }else{
+      const m=new F(dy,dx);
+      c+=`<div class="row m"><i>m</i> = <span class="frac"><span class="dyc">Δ<i>y</i></span><span class="dxc">Δ<i>x</i></span></span> = ${rawFrac('<span class="dyc">'+nStr(dy)+'</span>','<span class="dxc">'+nStr(dx)+'</span>')}${(m.n!==dy||m.d!==dx)&&!(m.isInt&&dx===1)?' = '+fH(m):''} ${m.isInt?'':approx(m)}</div>`;
+      const r=Math.round(m.v*100)/100,pc=Math.round(m.v*100);
+      if(m.n===0)say='Δy ist 0: Die Gerade ist <b>waagrecht</b>. Die Steigung ist 0, also 0 %.';
+      else say=`Gehst du <b>1</b> nach rechts, geht es <b>${nStr(Math.abs(r))}</b> nach <b>${m.n>0?'oben':'unten'}</b>. Die Gerade ${m.n>0?'steigt':'fällt'}. Als Prozent: <b>${nStr(pc)} %</b>.`;
+      if(dx<0)say+=' <br>Tipp: Hier liegt B links von A. Das geht auch, weil Δx und Δy dann beide das Vorzeichen wechseln.';
+    }
+    $('c1').innerHTML=c;$('say1').innerHTML=say;
+  }
+  let drag=null;
+  P.svg.addEventListener('pointerdown',e=>{const t=e.target.closest('[data-p]');if(!t)return;drag=t.dataset.p;P.svg.setPointerCapture(e.pointerId);e.preventDefault();t.focus({preventScroll:true});});
+  P.svg.addEventListener('pointermove',e=>{if(!drag)return;const w=P.world(e);move(drag,Math.round(w.x),Math.round(w.y));});
+  const end=()=>{drag=null;};P.svg.addEventListener('pointerup',end);P.svg.addEventListener('pointercancel',end);
+  function move(k,x,y){x=Math.max(-5,Math.min(5,x));y=Math.max(-5,Math.min(5,y));const o=pts[k==='A'?'B':'A'];if(x===o.x&&y===o.y)return;if(pts[k].x===x&&pts[k].y===y)return;pts[k]={x,y};draw();}
+  P.hand.addEventListener('keydown',e=>{const t=e.target.closest('[data-p]');if(!t)return;const k=t.dataset.p,p=pts[k];
+    const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]}[e.key];if(!d)return;e.preventDefault();move(k,p.x+d[0],p.y+d[1]);});
+  $('rnd1').addEventListener('click',()=>{let A,B;do{A={x:rnd(-5,4),y:rnd(-5,5)};B={x:rnd(A.x+1,5),y:rnd(-5,5)};}while(B.x-A.x<1);pts.A=A;pts.B=B;draw();});
+  draw();
+})();
+
+/* ---------- Schrittgenerator Steigung ---------- */
+function slopeSteps(A,B){ // A,B: {x:F,y:F}
+  const dy=B.y.sub(A.y),dx=B.x.sub(A.x),S=[];
+  S.push({t:'Punkte notieren',h:`<i>x</i><sub>1</sub> = ${cH(A.x)}, <i>y</i><sub>1</sub> = ${cH(A.y)} &nbsp;und&nbsp; <i>x</i><sub>2</sub> = ${cH(B.x)}, <i>y</i><sub>2</sub> = ${cH(B.y)}`});
+  S.push({t:'Höhenunterschied Δy ausrechnen',h:`<span class="dyc">Δ<i>y</i></span> = <i>y</i><sub>2</sub> − <i>y</i><sub>1</sub> = ${cH(B.y)} − ${par(cH(A.y),A.y)} = <b class="dyc">${cH(dy)}</b>`});
+  S.push({t:'Horizontalen Abstand Δx ausrechnen',h:`<span class="dxc">Δ<i>x</i></span> = <i>x</i><sub>2</sub> − <i>x</i><sub>1</sub> = ${cH(B.x)} − ${par(cH(A.x),A.x)} = <b class="dxc">${cH(dx)}</b>`});
+  if(dx.n===0){
+    S.push({t:'Bruch bilden',h:`<i>m</i> = ${rawFrac(cH(dy),'0')} → Durch 0 kann man nicht teilen. Die Gerade ist <b>senkrecht</b> und hat keine Steigung.`});
+    return {S,m:null};
+  }
+  const m=dy.div(dx);
+  let h=`<i>m</i> = <span class="frac"><span>Δ<i>y</i></span><span>Δ<i>x</i></span></span> = ${rawFrac('<span class="dyc">'+cH(dy)+'</span>','<span class="dxc">'+cH(dx)+'</span>')}`;
+  if(!(dx.isInt&&dx.n===1))h+=` = <b class="lc">${fH(m)}</b>`;
+  if(!m.isInt)h+=` ${approx(m)}`;
+  S.push({t:'Bruch bilden und kürzen',h});
+  let say;
+  if(m.n===0)say='<i>m</i> = 0: Die Gerade ist waagrecht.';
+  else say=`<i>m</i> ${m.n>0?'&gt;':'&lt;'} 0: Die Gerade <b>${m.n>0?'steigt':'fällt'}</b>. Pro 1 nach rechts ${m.n>0?'hoch':'runter'} um ${nStr(Math.abs(Math.round(m.v*100)/100))}, das sind ${nStr(Math.round(m.v*100))} %.`;
+  S.push({t:'Ergebnis deuten',h:say});
+  return {S,m};
+}
+function lineSteps(A,B){
+  const r=slopeSteps(A,B);
+  if(r.m===null)return {S:r.S,m:null,q:null};
+  const S=[{t:'Steigung m berechnen',h:`<i>m</i> = <span class="frac"><span><i>y</i><sub>2</sub> − <i>y</i><sub>1</sub></span><span><i>x</i><sub>2</sub> − <i>x</i><sub>1</sub></span></span> = ${rawFrac(cH(B.y)+' − '+par(cH(A.y),A.y),cH(B.x)+' − '+par(cH(A.x),A.x))} = ${rawFrac(cH(B.y.sub(A.y)),cH(B.x.sub(A.x)))} = <b class="lc">${fH(r.m)}</b>`}];
+  const m=r.m,mx=m.mul(A.x),q=A.y.sub(mx);
+  S.push({t:'P₁ in y = m·x + q einsetzen',h:`${cH(A.y)} = ${fH(m)} · ${par(cH(A.x),A.x)} + <i>q</i>`});
+  S.push({t:'Ausrechnen',h:`${cH(A.y)} = ${fH(mx)} + <i>q</i>`});
+  S.push({t:'Nach q auflösen',h:`<i>q</i> = ${cH(A.y)} − ${par(fH(mx),mx)} = <b class="dxc">${fH(q)}</b>`});
+  S.push({t:'Gleichung aufschreiben',h:`<b style="font-size:1.15em">${eqH(m,q)}</b>`});
+  const yB=m.mul(B.x).add(q);
+  S.push({t:'Probe mit P₂',h:`${fH(m)} · ${par(cH(B.x),B.x)} ${q.n<0?MIN+' '+fH(q.neg()):'+ '+fH(q)} = ${fH(yB)} ${yB.eq(B.y)?'✓ stimmt, P₂ liegt auf der Geraden.':'✗ stimmt nicht'}`});
+  return {S,m,q};
+}
+function renderSteps(ol,steps,n){
+  ol.innerHTML=steps.slice(0,n).map(s=>`<li><b>${s.t}</b><div class="m">${s.h}</div></li>`).join('');
+}
+function autoRange(...vals){const mx=Math.max(5,...vals.map(v=>Math.ceil(Math.abs(v))+1));return Math.min(12,mx);}
+
+/* ---------- 2 Rechner ---------- */
+function stepper(prefix,build,drawFn){
+  let shown=1,cache=null;
+  const ids=['x1','y1','x2','y2'].map(k=>$(prefix+k));
+  function read(){const v=ids.map(i=>parseNum(i.value));if(v.some(x=>x===null))return null;return {A:{x:v[0],y:v[1]},B:{x:v[2],y:v[3]}};}
+  function update(){
+    const p=read(),ol=$('st'+prefix.slice(1,2)),pr=$('pr'+prefix.slice(1,2));
+    if(!p){ol.innerHTML='<li><b>Eingabe prüfen</b><div class="m">Bitte bei allen Koordinaten eine Zahl eingeben.</div></li>';pr.textContent='';return;}
+    if(p.A.x.eq(p.B.x)&&p.A.y.eq(p.B.y)){ol.innerHTML='<li><b>Gleiche Punkte</b><div class="m">P₁ und P₂ sind derselbe Punkt. Durch einen einzigen Punkt gehen unendlich viele Geraden.</div></li>';pr.textContent='';drawFn(p,null);return;}
+    cache=build(p.A,p.B);shown=Math.min(Math.max(shown,1),cache.S.length);
+    renderSteps(ol,cache.S,shown);pr.textContent=`Schritt ${shown} von ${cache.S.length}`;
+    drawFn(p,cache);
+  }
+  ids.forEach(i=>i.addEventListener('input',()=>{shown=1;update();}));
+  const k=prefix.slice(1,2);
+  $('n'+k).addEventListener('click',()=>{shown++;update();});
+  $('a'+k).addEventListener('click',()=>{shown=99;update();});
+  $('r'+k).addEventListener('click',()=>{shown=1;update();});
+  update();
+}
+function drawPair(svgId,p,res,withLine){
+  const r=autoRange(p.A.x.v,p.A.y.v,p.B.x.v,p.B.y.v);
+  const P=plot($(svgId),{range:r,tickStep:r>6?2:1});
+  const A={x:p.A.x.v,y:p.A.y.v},B={x:p.B.x.v,y:p.B.y.v};
+  let lay='',top='';
+  if(res&&res.m!==null){const m=res.m.v;lay+=lineSVG(P,m,A.y-m*A.x,withLine?'gline':'gline ghost');const t=triSVG(P,A,B);lay+=t.lay;top+=t.top;}
+  else if(res&&res.m===null){lay+=lineSVG(P,null,A.x,'gline ghost');}
+  if(withLine&&res&&res.q){const q=res.q.v;top+=`<circle class="ptq" cx="${P.X(0)}" cy="${P.Y(q)}" r="6"/><text class="ptl" x="${P.X(0)-10}" y="${P.Y(q)+5}" text-anchor="end">q</text>`;}
+  top+=ptSVG(P,A,'P₁',A.y>B.y)+ptSVG(P,B,'P₂',B.y>A.y);
+  P.lay.innerHTML=lay;P.top.innerHTML=top;
+}
+stepper('c2',slopeSteps,(p,res)=>drawPair('p2',p,res,false));
+stepper('c5',lineSteps,(p,res)=>drawPair('p5',p,res,true));
+
+/* ---------- 3 Vier Fälle ---------- */
+(function(){
+  const cases=[
+    {m:1,q:0,b:'m > 0',t:'Die Gerade steigt.'},
+    {m:-1,q:0,b:'m < 0',t:'Die Gerade fällt.'},
+    {m:0,q:1,b:'m = 0',t:'Die Gerade ist waagrecht.'},
+    {m:null,q:1,b:'keine Steigung',t:'Senkrechte Gerade, Δx = 0.'}];
+  $('four').innerHTML=cases.map((c,i)=>`<figure><svg class="plot" id="f${i}" aria-hidden="true"></svg><figcaption><b>${c.b}</b>${c.t}</figcaption></figure>`).join('');
+  cases.forEach((c,i)=>{const P=plot($('f'+i),{range:3,size:200,ticks:false});P.lay.innerHTML=lineSVG(P,c.m,c.q);});
+})();
+
+/* ---------- 4 Regler ---------- */
+(function(){
+  const P=plot($('p4'));
+  const sm=$('sm'),sq=$('sq');
+  const dfmt=f=>nStr(f.v);
+  function draw(){
+    const m=parseFloat(sm.value),q=parseFloat(sq.value),mF=F.from(m),qF=F.from(q);
+    $('om').textContent=nStr(m);$('oq').textContent=nStr(q);
+    let lay=lineSVG(P,m,q),top='';
+    if(m!==0){const t=triSVG(P,{x:0,y:q},{x:1,y:q+m},{dxLabel:'1',dyLabel:nStr(m)});lay+=t.lay;top+=t.top;}
+    top+=`<circle class="ptq" cx="${P.X(0)}" cy="${P.Y(q)}" r="7"/><text class="ptl" x="${P.X(0)-10}" y="${P.Y(q)+(m>0?-8:16)}" text-anchor="end">(0 | ${nStr(q)})</text>`;
+    P.lay.innerHTML=lay;P.top.innerHTML=top;
+    // Gleichung mit Farben
+    let mx='';
+    if(m!==0)mx=`<span class="mv">${m===1?'':m===-1?MIN:nStr(m)}</span><i>x</i>`;
+    let qs='';
+    if(mx==='')qs=`<span class="qv">${nStr(q)}</span>`;else if(q>0)qs=` + <span class="qv">${nStr(q)}</span>`;else if(q<0)qs=` ${MIN} <span class="qv">${nStr(-q)}</span>`;
+    $('eq4').innerHTML='<i>y</i> = '+mx+qs;
+    let s;
+    if(m===0)s=`Mit <i class="v">m</i> = 0 ist die Gerade waagrecht. Für jedes <i class="v">x</i> ist <i class="v">y</i> = ${nStr(q)}.`;
+    else s=`Die Gerade schneidet die y‑Achse bei <b>${nStr(q)}</b>. Von dort gehst du 1 nach rechts und ${nStr(Math.abs(m))} nach ${m>0?'oben':'unten'}. ${Math.abs(m)>=2?'Grosses |m|: die Gerade ist steil.':Math.abs(m)<=0.5?'Kleines |m|: die Gerade ist flach.':''}`;
+    $('say4').innerHTML=s;
+    const xs=[-2,-1,0,1,2,3];
+    $('t4').innerHTML=`<tr><th>x</th>${xs.map(x=>`<td>${nStr(x)}</td>`).join('')}</tr><tr><th>y</th>${xs.map(x=>`<td${x===0?' style="font-weight:700"':''}>${nStr(m*x+q)}</td>`).join('')}</tr>`;
+  }
+  sm.addEventListener('input',draw);sq.addEventListener('input',draw);
+  document.querySelectorAll('[data-pre]').forEach(b=>b.addEventListener('click',()=>{const [m,q]=b.dataset.pre.split(',');sm.value=m;sq.value=q;draw();}));
+  draw();
+})();
+
+/* ---------- 6 Training ---------- */
+(function(){
+  const NICE=[[1,1],[2,1],[3,1],[1,2],[1,3],[2,3],[3,2],[1,4],[3,4],[4,3]];
+  let type='mix',task=null,score={ok:0,all:0,str:0},counted=false,hintShown=false;
+  let P=null;
+  function niceLine(allowZero){
+    for(let k=0;k<200;k++){
+      let [n,d]=pick(NICE);if(Math.random()<.5)n=-n;
+      if(allowZero&&Math.random()<.08){n=0;d=rnd(2,3);}
+      const q=rnd(-3,3);
+      if(Math.abs(q+n)<=5&&d<=5)return {m:new F(n,d),n,d,q};
+    }
+    return {m:new F(1,2),n:1,d:2,q:0};
+  }
+  const gens={
+    ablesen(){
+      const L=niceLine(true);
+      return {type:'ablesen',q:'Bestimme die <b>Steigung <i class="v">m</i></b> der blauen Geraden.',
+        plot:L,fields:[['m','<i>m</i> =']],ans:{m:L.m},
+        hint:'Suche zwei Stellen, wo die Gerade genau durch eine Gitterkreuzung geht. Zeichne dazwischen das Steigungsdreieck: zuerst nach rechts (Δx), dann hoch oder runter (Δy).',
+        tri:[{x:0,y:L.q},{x:L.d,y:L.q+L.n}],
+        sol:()=>`Zum Beispiel von (0 | ${nStr(L.q)}) nach (${L.d} | ${nStr(L.q+L.n)}): <span class="dxc">Δx = ${L.d}</span>, <span class="dyc">Δy = ${nStr(L.n)}</span>, also <span class="m"><i>m</i> = ${rawFrac(nStr(L.n),L.d)}${(L.m.d!==L.d||L.m.isInt)?' = '+fH(L.m):''}</span>`};
+    },
+    rechnen(){
+      let A,B;do{A={x:rnd(-8,8),y:rnd(-8,8)};B={x:rnd(-8,8),y:rnd(-8,8)};}while(A.x===B.x);
+      const AF={x:new F(A.x),y:new F(A.y)},BF={x:new F(B.x),y:new F(B.y)};
+      const r=slopeSteps(AF,BF);
+      return {type:'rechnen',q:`Berechne die Steigung der Geraden durch <span class="m">A(${nStr(A.x)} | ${nStr(A.y)})</span> und <span class="m">B(${nStr(B.x)} | ${nStr(B.y)})</span>.`,
+        plot:null,fields:[['m','<i>m</i> =']],ans:{m:r.m},
+        hint:'Formel: m = (y₂ − y₁) / (x₂ − x₁). Achte auf die Vorzeichen: Minus minus wird plus.',
+        steps:r.S.slice(1,4)};
+    },
+    gleichung(){
+      const L=niceLine(true);
+      return {type:'gleichung',q:'Lies die <b>Geradengleichung</b> <span class="m"><i>y</i> = <i>m</i>·<i>x</i> + <i>q</i></span> ab.',
+        plot:L,fields:[['m','<i>m</i> ='],['q','<i>q</i> =']],ans:{m:L.m,q:new F(L.q)},
+        hint:'q: Wo schneidet die Gerade die y‑Achse? m: Zeichne ab diesem Punkt ein Steigungsdreieck.',
+        tri:[{x:0,y:L.q},{x:L.d,y:L.q+L.n}],showQ:true,
+        sol:()=>`Die Gerade schneidet die y‑Achse bei <b>${nStr(L.q)}</b>, also <i class="v">q</i> = ${nStr(L.q)}. Steigungsdreieck: <span class="dxc">Δx = ${L.d}</span>, <span class="dyc">Δy = ${nStr(L.n)}</span>, also <i class="v">m</i> = <span class="m">${fH(L.m)}</span>. Gleichung: <span class="m">${eqH(L.m,new F(L.q))}</span>`};
+    },
+    punkte(){
+      for(let k=0;k<300;k++){
+        let [n,d]=pick(NICE);if(Math.random()<.5)n=-n;const m=new F(n,d),q=rnd(-5,5);
+        const xs=[];for(let x=-4;x<=4;x++)if(x%d===0)xs.push(x);
+        if(xs.length<2)continue;
+        const x1=pick(xs);let x2;do{x2=pick(xs);}while(x2===x1);
+        const a=Math.min(x1,x2),b=Math.max(x1,x2);
+        const y1=m.mul(new F(a)).add(new F(q)),y2=m.mul(new F(b)).add(new F(q));
+        if(!y1.isInt||!y2.isInt||Math.abs(y1.n)>9||Math.abs(y2.n)>9)continue;
+        const A={x:new F(a),y:y1},B={x:new F(b),y:y2};
+        const r=lineSteps(A,B);
+        return {type:'punkte',q:`Die Gerade geht durch <span class="m">P₁(${nStr(a)} | ${nStr(y1.n)})</span> und <span class="m">P₂(${nStr(b)} | ${nStr(y2.n)})</span>. Bestimme <i class="v">m</i> und <i class="v">q</i>.`,
+          plot:null,fields:[['m','<i>m</i> ='],['q','<i>q</i> =']],ans:{m,q:new F(q)},
+          hint:'Zuerst m mit der Steigungsformel. Dann P₁ in y = m·x + q einsetzen und nach q auflösen.',
+          steps:r.S,pts:{A:{x:a,y:y1.n},B:{x:b,y:y2.n}}};
+      }
+    }
+  };
+  function drawTask(showSol){
+    const wrap=$('tplotwrap');
+    const needPlot=task.plot||(showSol&&task.pts);
+    wrap.hidden=!needPlot;
+    if(!needPlot)return;
+    if(task.plot){
+      P=plot($('p6'));const L=task.plot;let lay=lineSVG(P,L.m.v,L.q),top='';
+      if(showSol&&task.tri){const t=triSVG(P,task.tri[0],task.tri[1]);lay+=t.lay;top+=t.top;top+=ptSVG(P,task.tri[0],'',false)+ptSVG(P,task.tri[1],'',false);}
+      if(showSol&&task.showQ)top+=`<circle class="ptq" cx="${P.X(0)}" cy="${P.Y(L.q)}" r="7"/>`;
+      P.lay.innerHTML=lay;P.top.innerHTML=top;
+    }else{
+      const A=task.pts.A,B=task.pts.B,r=autoRange(A.x,A.y,B.x,B.y);
+      P=plot($('p6'),{range:r,tickStep:r>6?2:1});const m=task.ans.m.v,q=task.ans.q.v;
+      const t=triSVG(P,A,B);P.lay.innerHTML=lineSVG(P,m,q)+t.lay;
+      P.top.innerHTML=t.top+ptSVG(P,A,'P₁',A.y>B.y)+ptSVG(P,B,'P₂',B.y>A.y)+`<circle class="ptq" cx="${P.X(0)}" cy="${P.Y(q)}" r="6"/>`;
+    }
+  }
+  function newTask(){
+    const t=type==='mix'?pick(['ablesen','rechnen','gleichung','punkte']):type;
+    task=gens[t]();counted=false;hintShown=false;
+    $('tq').innerHTML=task.q;
+    $('tform').innerHTML=task.fields.map(([k,l])=>`<label class="pinput" for="ti-${k}"><span class="m">${l}</span> <input type="text" id="ti-${k}" inputmode="text" spellcheck="false"></label>`).join('');
+    $('tfb').innerHTML='';
+    drawTask(false);
+  }
+  function solutionHTML(){
+    if(task.steps)return `<ol class="steps">${task.steps.map(s=>`<li><b>${s.t}</b><div class="m">${s.h}</div></li>`).join('')}</ol>`;
+    return `<p>${task.sol()}</p>`;
+  }
+  function check(){
+    let allOk=true,approxUsed=false,msgs=[];
+    for(const [k] of task.fields){
+      const el=$('ti-'+k),raw=el.value,v=parseNum(raw);
+      if(v===null){$('tfb').innerHTML=`<div class="fb bad"><strong class="bad">Eingabe fehlt.</strong><p>Bitte bei <i class="v">${k}</i> eine Zahl oder einen Bruch eingeben, zum Beispiel 2/3 oder -1.5.</p></div>`;el.focus();return;}
+      const a=task.ans[k];
+      if(v.eq(a))continue;
+      if(/[.,]/.test(raw)&&Math.abs(v.v-a.v)<0.006){approxUsed=true;continue;}
+      allOk=false;
+      if(Math.abs(v.v+a.v)<1e-9&&a.n!==0)msgs.push(`Bei <i class="v">${k}</i> stimmt der Betrag, aber das Vorzeichen ist falsch.`);
+      else if(k==='m'&&a.n!==0&&Math.abs(v.v-1/a.v)<1e-9)msgs.push('Bei <i class="v">m</i> hast du Δx und Δy vertauscht. Oben steht Δy, unten Δx.');
+    }
+    if(!counted){score.all++;if(allOk){score.ok++;score.str++;}else score.str=0;counted=true;}
+    else if(allOk&&!hintShown){/* zweiter Versuch zählt nicht als Punkt */}
+    $('sc-ok').textContent=score.ok;$('sc-all').textContent=score.all;$('sc-str').textContent=score.str;
+    $('sc-msg').textContent=score.str>=5?'Stark, 5 in Folge!':score.str>=3?'Gute Serie!':'';
+    if(allOk){
+      $('tfb').innerHTML=`<div class="fb ok"><strong class="ok">Richtig!</strong>${approxUsed?`<p>Gerundet passt es. Als Bruch ist es genau: <span class="m">${fH(task.ans.m)}</span>.</p>`:''}<details><summary>Lösungsweg ansehen</summary>${solutionHTML()}</details></div>`;
+      drawTask(true);$('tnew').focus();
+    }else{
+      $('tfb').innerHTML=`<div class="fb bad"><strong class="bad">Noch nicht ganz.</strong>${msgs.map(m=>`<p>${m}</p>`).join('')}<p>Versuch es nochmals oder schau dir den Lösungsweg an.</p><details><summary>Lösungsweg anzeigen</summary>${solutionHTML()}</details></div>`;
+      const d=$('tfb').querySelector('details');d.addEventListener('toggle',()=>{if(d.open)drawTask(true);});
+    }
+  }
+  $('tcheck').addEventListener('click',check);
+  $('tform').addEventListener('submit',e=>{e.preventDefault();check();});
+  $('tform').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+  $('tnew').addEventListener('click',newTask);
+  $('thint').addEventListener('click',()=>{hintShown=true;$('tfb').innerHTML=`<div class="fb hint"><p><b>Tipp:</b> ${task.hint}</p></div>`;});
+  document.querySelectorAll('#seg button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));type=b.dataset.t;newTask();}));
+  newTask();
+})();
+})();
+</script>
+
+</body></html>

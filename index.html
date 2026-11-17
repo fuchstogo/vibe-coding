@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe Coding im Unterricht · Workshop Team OSC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#1b1f1c;--muted:#66706a;--line:#e3e6e3;--soft:#f4f6f4;--acc:#2b6fd6}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#fff;color:var(--ink);font:17px/1.65 'Albert Sans',system-ui,sans-serif}
+a{color:var(--acc)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 40px}
+@media(max-width:700px){.wrap{padding:0 22px}}
+.serif{font-family:'Albert Sans',system-ui,sans-serif}
+
+/* Kopf */
+header{padding:96px 0 72px}
+.kick{font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 clamp(48px,7vw,88px)/1 'Albert Sans',system-ui,sans-serif;letter-spacing:-.02em;margin:18px 0 28px}
+.intro{font-size:21px;line-height:1.55;max-width:620px;margin:0;color:#3a403c}
+
+/* Kapitel */
+.chapter{border-top:1px solid var(--ink);padding:56px 0 72px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px}
+@media(max-width:820px){.chapter{grid-template-columns:1fr;gap:16px}}
+.chapter h2{font:600 30px/1.15 'Albert Sans',system-ui,sans-serif;margin:0}
+.chapter .lbl{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:10px}
+.big{list-style:none;margin:0;padding:0}
+.big li{font:400 clamp(22px,2.6vw,30px)/1.3 'Albert Sans',system-ui,sans-serif;padding:14px 0;border-bottom:1px solid var(--line)}
+.big li:first-child{padding-top:0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px 40px}
+.cols h3{margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cols p{margin:0}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:20px;align-items:baseline;font:400 clamp(22px,2.6vw,30px)/1.3 'Albert Sans',system-ui,sans-serif;padding:12px 0;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);font:500 14px 'Albert Sans',sans-serif;color:var(--acc);min-width:20px}
+.note{margin:20px 0 0;color:var(--muted);font-size:16px}
+
+.agenda{list-style:none;margin:0;padding:0}
+.agenda li{display:grid;grid-template-columns:80px 1fr;gap:4px 20px;padding:14px 0;border-bottom:1px solid var(--line)}
+.agenda li:first-child{padding-top:0}
+.agenda span{grid-row:span 2;font-size:15px;font-weight:600;color:var(--acc);font-variant-numeric:tabular-nums}
+.agenda b{font:400 clamp(21px,2.3vw,26px)/1.25 'Albert Sans',system-ui,sans-serif}
+.agenda em{font-style:normal;color:var(--muted);font-size:16px}
+.lead2{margin:0 0 28px;font-size:19px;line-height:1.6;color:#3a403c;max-width:640px}
+.formula li{display:grid;grid-template-columns:20px 1fr;gap:2px 20px}
+.formula li::before{grid-row:span 2}
+.formula b{font-weight:400}
+.formula em{font:400 16px/1.5 'Albert Sans',sans-serif;color:var(--muted);font-style:normal}
+.opt{font:400 16px 'Albert Sans',sans-serif;color:var(--muted)}
+#demoPrompt{white-space:pre-line}
+.fig{margin:0;max-width:700px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.fig img{display:block;width:100%;height:auto}
+/* Beispiele */
+.ex{border-top:1px solid var(--line);padding:64px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
+.chapter + .ex{border-top:1px solid var(--ink)}
+@media(max-width:900px){.ex{grid-template-columns:1fr;gap:28px}}
+.ex-meta{display:flex;gap:14px;font-size:14px;color:var(--muted);margin-bottom:10px}
+.ex-meta b{color:var(--acc);font-weight:600}
+.ex h3{font:600 clamp(28px,3.4vw,40px)/1.1 'Albert Sans',system-ui,sans-serif;margin:0 0 26px;letter-spacing:-.01em}
+blockquote{margin:0;padding:0 0 0 24px;border-left:2px solid var(--acc)}
+blockquote p{margin:0;font:400 clamp(18px,1.8vw,20px)/1.6 'Albert Sans',system-ui,sans-serif;color:#2b302d}
+.qlbl{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.att{margin:16px 0 0 26px;font-size:15px;color:var(--muted)}
+.after{margin:22px 0 0;font-size:16px;color:#3a403c;max-width:520px}
+.copy{margin-top:22px;background:none;border:0;padding:0;font-size:15px;font-weight:600;color:var(--acc);text-decoration:underline;text-underline-offset:4px}
+
+.result .qlbl{margin-bottom:12px}
+.shot{position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:0;text-align:left}
+.shot iframe{position:absolute;top:0;left:0;width:1200px;height:900px;border:0;transform-origin:0 0;pointer-events:none}
+.shot .hov{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:14px;opacity:0;transition:opacity .2s;background:linear-gradient(transparent 60%,rgba(0,0,0,.18))}
+.shot:hover .hov,.shot:focus-visible .hov{opacity:1}
+.hov span{background:var(--ink);color:#fff;font-size:14px;font-weight:600;padding:7px 12px;border-radius:4px}
+.shot.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top left}
+.shot.empty{display:flex;align-items:center;justify-content:center;cursor:default;color:var(--muted);font:500 20px 'Albert Sans',system-ui,sans-serif;padding:24px;text-align:center}
+.links{display:flex;flex-wrap:wrap;gap:22px;margin-top:16px;font-size:15px;font-weight:600}
+
+/* Schluss */
+.core{border-top:1px solid var(--ink);padding:88px 0 96px}
+.core p{font:600 clamp(34px,5.2vw,64px)/1.1 'Albert Sans',system-ui,sans-serif;letter-spacing:-.02em;margin:0;max-width:960px}
+.core p em{color:var(--acc)}
+footer{border-top:1px solid var(--line);padding:28px 0 60px;font-size:14px;color:var(--muted)}
+
+/* Vollansicht */
+.full{position:fixed;inset:0;z-index:50;background:#fff;display:flex;flex-direction:column}
+.full .bar{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line)}
+.full .bar b{font:600 22px 'Albert Sans',system-ui,sans-serif;flex:1}
+.full .bar a,.full .bar button{font-size:15px;font-weight:600;background:none;border:0;color:var(--acc)}
+.full iframe{flex:1;border:0;width:100%}
+
+/* Präsentation */
+.pstart{position:fixed;top:16px;right:16px;z-index:20;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--ink);box-shadow:0 4px 14px -6px rgba(0,0,0,.25)}
+.pstart:hover{border-color:var(--acc);color:var(--acc)}
+.pbar{position:fixed;bottom:18px;right:18px;z-index:40;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:0 4px 14px -6px rgba(0,0,0,.25);font-size:14px}
+.pbar button{background:none;border:0;border-radius:999px;padding:7px 12px;font-weight:600;color:var(--ink)}
+.pbar button:hover{background:var(--soft);color:var(--acc)}
+.pbar .cnt{min-width:58px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.pprog{position:fixed;top:0;left:0;height:3px;background:var(--acc);z-index:40;transition:width .25s}
+body.present{overflow:hidden}
+body.present .pstart,body.present footer{display:none}
+body.present .wrap{max-width:none;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 5vw}
+body.present .slide.off{display:none!important}
+body.present .slide{width:min(1160px,100%);border-top:0!important;padding:0!important;margin:0}
+body.present .ex{gap:48px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kick">Workshop Team OSC · Oberstufe Centrum St.Gallen</div>
+    <h1>Vibe Coding im&nbsp;Unterricht</h1>
+    <p class="intro">Was man eingibt und was dabei herauskommt. Beispiele aus dem Unterricht, jeweils mit dem Original-Prompt und der fertigen App.</p>
+  </header>
+
+  <section class="chapter">
+    <div><span class="lbl">Grundidee</span><h2>Was ist Vibe&nbsp;Coding?</h2></div>
+    <div>
+      <ul class="big"><li>Idee beschreiben, KI schreibt Code</li><li>Vorwärtsstolpern: klein starten, ausprobieren, weitergehen</li><li>Learning by Doing</li></ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div><span class="lbl">Motivation</span><h2>Freude am Gestalten</h2></div>
+    <div class="cols">
+      <div><h3>Selbstbestimmung</h3><p>Du baust genau das, was deine Klasse braucht.</p></div>
+      <div><h3>Berufliche Identität</h3><p>Lehrpersonen gestalten ihr Material selbst.</p></div>
+      <div><h3>Kein Wirkungsnachweis nötig</h3><p>Ausprobieren ist erlaubt.</p></div>
+      <div><h3>Das könnt ihr schon</h3><p>Aufgaben strukturieren und sich in Lernende hineinversetzen.</p></div>
+    </div>
+  </section>
+
+  <div id="block1"></div>
+
+  <section class="chapter">
+    <div><span class="lbl">Vorgehen</span><h2>Unterrichts&shy;entwicklung</h2></div>
+    <div>
+      <ol class="steps"><li>Beobachten</li><li>Ziel klären</li><li>Skizze und Prototyp</li><li>Erproben</li><li>Lernspuren analysieren</li><li>Überarbeiten</li></ol>
+      <p class="note">Start bei einem konkreten Lernproblem. Pädagogik vor Technologie.</p>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div><span class="lbl">Haltung</span><h2>Rolle der Lehrperson</h2></div>
+    <div>
+      <ul class="big"><li>Die App ist nur ein Zwischenstand</li><li>Entscheiden: Was übernimmt die Technik, was bleibt bei den Lernenden?</li><li>Eigene Annahmen prüfen</li></ul>
+    </div>
+  </section>
+
+  <div id="block3"></div>
+
+  <section class="chapter" id="formel">
+    <div><span class="lbl">Selber bauen</span><h2>Die Prompt-Formel</h2></div>
+    <div>
+      <p class="lead2">Eine merkbare Struktur ist wichtiger als Technikwissen.</p>
+      <ol class="steps formula">
+        <li><b>Ziel und Fach</b><em>Was soll gelernt oder geübt werden?</em></li>
+        <li><b>Zielgruppe</b><em>Klassenstufe, Niveau, Sprache</em></li>
+        <li><b>Funktion</b><em>Was soll die App können? Zum Beispiel Quiz, Lückentext, Zuordnung oder Rückmeldung nach jeder Aufgabe.</em></li>
+        <li><b>Technische Vorgaben <span class="opt">(nicht zwingend nötig)</span></b><em>Eine einzige HTML-Datei, CSS und JavaScript inklusive, keine externen Bibliotheken, keine Datenübertragung, läuft offline.</em></li>
+        <li><b>Gestaltung</b><em>Grosse Schrift, hoher Kontrast, altersgerechte Sprache, Gamification-Charakter (umstritten).</em></li>
+      </ol>
+      <p class="note">Nicht alle Bausteine müssen im ersten Prompt stehen. Die KI liefert einen Entwurf, der immer noch weiter verbessert und angepasst werden kann.</p>
+      <p class="qlbl" style="margin-top:40px">Beispiel-Prompt</p>
+      <blockquote><p id="demoPrompt">«Erstelle eine Lern-App als einzelne HTML-Datei (CSS und JavaScript inline, keine externen Bibliotheken, keine Datenübertragung).
+Thema: Bruchrechnen, Addition gleichnamiger Brüche, 1. Oberstufe Schweiz
+Funktion: 10 Aufgaben nacheinander, Eingabefeld, sofortige Rückmeldung mit kurzem Tipp bei Fehlern, am Ende Punktestand.
+Gestaltung: grosse Schrift, hoher Kontrast, freundliche Sprache, Gamification-Charakter.»</p></blockquote>
+      <button type="button" class="copy" id="copyDemo">Prompt kopieren</button>
+      <p class="note">Die Klammer ist nicht zwingend. Lässt du sie weg, ergänze «… die auch offline funktioniert».</p>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div><span class="lbl">Wichtig</span><h2>Zu beachten</h2></div>
+    <div class="cols">
+      <div><h3>Datenschutz</h3><p>Keine Personendaten in KI-Tools.</p></div>
+      <div><h3>Codequalität</h3><p>Jede App selbst testen.</p></div>
+      <div><h3>Lernwirkung</h3><p>Die Denkarbeit bleibt bei den Lernenden.</p></div>
+      <div><h3>Team</h3><p>Prototypen und Erfahrungen teilen.</p></div>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div><span class="lbl">Abschluss</span><h2>Speichern und verteilen</h2></div>
+    <div>
+      <figure class="fig"><img src="img/download.png" alt="Bildschirmausschnitt: Oben rechts neben der Vorschau ist das Download-Symbol markiert." width="700" height="265"></figure>
+      <div class="cols" style="margin-top:28px">
+        <div><h3>Speichern</h3><p>Oben rechts über der Vorschau auf das Download-Symbol klicken. Du erhältst eine HTML-Datei.</p></div>
+        <div><h3>Verteilen</h3><p>Die Datei per Teams, Mail oder Lernplattform verteilen. Sie öffnet sich in jedem Browser. Für einen Link eignet sich GitHub Pages.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="core"><p>Die <em>Absicht</em> bestimmt den Anspruch ans Ergebnis.</p></section>
+
+  <footer>Quelle: VisibleVibe, imedias FHNW, «Warum Lehrpersonen vibe-coden sollten», <a href="https://visiblevibe.ch" target="_blank" rel="noopener">visiblevibe.ch</a> · Weitere Beispiele: <a href="https://bit.ly/osc-edu-space" target="_blank" rel="noopener">bit.ly/osc-edu-space</a></footer>
+</div>
+
+<button type="button" class="pstart" id="pStart">Präsentieren ▶</button>
+<div class="pprog" id="pProg" hidden></div>
+<div class="pbar" id="pBar" hidden>
+  <button type="button" id="pPrev" aria-label="Vorherige Folie">←</button>
+  <span class="cnt" id="pCnt"></span>
+  <button type="button" id="pNext" aria-label="Nächste Folie">→</button>
+  <button type="button" id="pFs">Vollbild</button>
+  <button type="button" id="pEnd">Beenden</button>
+</div>
+
+<div class="full" id="full" role="dialog" aria-modal="true" aria-labelledby="fT" hidden>
+  <div class="bar"><b id="fT"></b><a id="fNew" href="#" target="_blank" rel="noopener">In neuem Tab ↗</a><button id="fX">Schliessen ✕</button></div>
+  <iframe id="fF" title="App"></iframe>
+</div>
+
+<script>
+(function(){
+var EX=[
+ {b:1,fach:'Mathematik',stufe:'3. Oberstufe',t:'Pyramiden berechnen',img:'img/pyramiden.jpg',
+  live:'https://fuchstogo.github.io/pyramiden/',
+  p:'Erstelle mir eine moderne, interaktive Seite zur Berechnung der quadratischen Pyramide, der Rechteckpyramide und der Dreieckspyramide. Alles soll Schritt für Schritt erklärt und interaktiv aufgebaut sein, als Wiedereinstieg ins Thema Pyramidenberechnungen (Oberfläche und Volumen). Zielgruppe: 3. Oberstufe St. Gallen.'},
+ {b:3,fach:'Mathematik',stufe:'3. Realklasse',t:'Steigung und Geradengleichung',
+  file:'apps/geradengleichung.html',live:'https://fuchstogo.github.io/geradengleichung/',
+  p:'Erstelle mir eine moderne, interaktive Seite zu Steigungen, ihrer Berechnung und der Geradengleichung. Alles soll Schritt für Schritt erklärt und interaktiv aufgebaut sein, als Wiedereinstieg ins Thema. Zielgruppe: 3. Realklasse, Oberstufe St. Gallen.'},
+ {b:3,fach:'Mathematik',stufe:'Koordinatensystem',t:'Forschungstauchgang',
+  file:'apps/tauchgang.html',
+  p:'Erstelle ein Spiel wie «Schiffe versenken» für zwei Personen an einem Gerät. Gespielt wird auf einem Koordinatensystem von −7 bis +7. Statt Schiffen versteckt man Meerestiere, die man mit Koordinaten (x|y) sucht. Thema: Forschungstauchgang. Gestalte die Seite wie ein Tauchlogbuch, sie soll nicht nach KI aussehen. Schreibe auf Schweizer Hochdeutsch.'},
+ {b:3,fach:'Natur und Technik',stufe:'NT 7, Kapitel 5',t:'Energiewandler-Werkstatt',
+  file:'apps/energiewandler.html',anhang:'Dossier NT 7, Kapitel 5 Energie (PDF)',
+  p:'Erstelle mir eine interaktive Seite zu Energiewandler / Energieumwandlungsketten.',
+  nach:'Kurzer Prompt, aber mit Dossier im Anhang. Das Dossier liefert Inhalt, Begriffe und die Darstellung der Ketten.'},
+ {b:3,fach:'Informatik',stufe:'Besuchstag, 6. Klasse',t:'Besuchstag micro:bit',
+  file:'apps/besuchstag.html',live:'https://fuchstogo.github.io/besuchstag/',
+  p:'Ich benötige eine Seite für den Besuchstag, welche die 6. Klässler:innen durch den Workshop Informatik führt. Wir arbeiten mit einem micro:bit und möchten zusammen das Tutorial Schere, Stein, Papier erstellen. Die Schüler arbeiten zu zweit, es sind etwa 10 bis 15 Schülerinnen und Schüler, und ich habe zusätzlich 3 Schüler von mir, welche als Unterstützung dienen. Die Sechstklässlerinnen und Sechstklässler sollen selbstständig mittels Tutorial von makecode.org das Programm erstellen und nachher ausprobieren. Es soll auch ein herzliches Willkommen enthalten und ansprechend sein. Schaue bitte nach, wie der Auftritt der Oberstufe Centrum St.Gallen ist.',
+  nach:'Danach in mehreren Runden verfeinert: drei Levels mit verschiedenen Tutorials, Tutorial in eigenem Fenster, Dateien zum Zurücksetzen der micro:bits.'},
+ {b:3,fach:'Englisch',stufe:'Irregular verbs',t:'Past Simple Trainer',
+  anhang:'Irregular_verbs.pdf',
+  p:'Erstelle eine App im HTML Format, mit der die Past Simple Formen im Englischen geübt werden können. Es sollen dabei nur die Verben im angehängten Dokument geübt werden. Es sollen Aufgaben mit unterschiedlichen Schwierigkeitsstufen erstellt werden. Deutsch-Englisch Übersetzungen als Aufgabe soll ebenfalls enthalten sein. Die Aufgaben sollen Gamification-Charakter haben und einladend gestaltet sein.'},
+ {b:3,fach:'Englisch',stufe:'1. Sek, Halloween',t:'Escape Pumpkin Manor',
+  file:'apps/escape-room.html',anhang:'Lösungsdokument für die Lehrperson (Word)',
+  p:'Erstelle einen Escape Room mit verschiedenen Rätseln im HTML Format. Das Rätsel soll von Halloween handeln und in Englisch verfasst sein. Englischniveau anpassen. Es handelt sich um Schülerinnen und Schüler in der 1. Klasse der Sekundarschule in der Schweiz im Alter von 12 Jahren. Erstelle zu jedem Rätsel auch zwei Hinweise, welche durch Drücken auf einen Button angezeigt werden. Die Buttons können erst nach 5 Minuten Rätseln gedrückt werden. Das Rätsel soll so aufgebaut sein, dass es in 45 Minuten gelöst werden kann. Verfasse für die Lehrperson ein separates Lösungsdokument.'}
+];
+var $=function(id){return document.getElementById(id);};
+function el(t,a,x){var e=document.createElement(t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
+var last=null;
+
+EX.forEach(function(e,i){
+  var s=el('article',{class:'ex'});
+  var L=el('div');
+  var m=el('div',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));L.appendChild(m);
+  L.appendChild(el('h3',null,e.t));
+  L.appendChild(el('p',{class:'qlbl'},'Prompt'));
+  var q=el('blockquote');q.appendChild(el('p',null,e.p?'«'+e.p+'»':'Zu dieser App ist kein Prompt dokumentiert. Wie könnte er gelautet haben?'));L.appendChild(q);
+  if(e.anhang)L.appendChild(el('p',{class:'att'},'Angehängt: '+e.anhang));
+  if(e.nach)L.appendChild(el('p',{class:'after'},e.nach));
+  if(e.p){var c=el('button',{type:'button',class:'copy'},'Prompt kopieren');c.onclick=function(){copy(e.p,c);};L.appendChild(c);}
+  s.appendChild(L);
+
+  var R=el('div',{class:'result'});
+  R.appendChild(el('p',{class:'qlbl'},'Ergebnis'));
+  if(e.file){
+    var sh=el('button',{type:'button',class:'shot','aria-label':e.t+' gross öffnen'});
+    sh.appendChild(el('iframe',{src:e.file,loading:'lazy',tabindex:'-1','aria-hidden':'true',title:''}));
+    var h=el('span',{class:'hov'});h.appendChild(el('span',null,'Gross öffnen'));sh.appendChild(h);
+    sh.onclick=function(){openFull(e,sh);};R.appendChild(sh);
+  }else if(e.img){
+    var ia=el('a',{class:'shot img',href:e.live,target:'_blank',rel:'noopener','aria-label':e.t+' live öffnen'});
+    ia.appendChild(el('img',{src:e.img,alt:'Bildschirmfoto: '+e.t}));
+    var h2=el('span',{class:'hov'});h2.appendChild(el('span',null,'Live öffnen ↗'));ia.appendChild(h2);
+    R.appendChild(ia);
+  }else{
+    R.appendChild(el('div',{class:'shot empty'},e.live?'Läuft auf GitHub Pages':'Hier ist keine App hinterlegt'));
+  }
+  var lk=el('div',{class:'links'});
+  if(e.file){var o=el('a',{href:e.file,target:'_blank',rel:'noopener'},'In neuem Tab ↗');lk.appendChild(o);}
+  if(e.live)lk.appendChild(el('a',{href:e.live,target:'_blank',rel:'noopener'},'Live-Link ↗'));
+  if(lk.children.length)R.appendChild(lk);
+  s.appendChild(R);
+  $('block'+e.b).appendChild(s);
+});
+
+var dp=$('copyDemo');dp.onclick=function(){copy($('demoPrompt').textContent.replace(/^«|»$/g,''),dp);};
+function fit(){document.querySelectorAll('.shot iframe').forEach(function(f){f.style.transform='scale('+(f.parentNode.clientWidth/1200)+')';});}
+window.addEventListener('resize',fit);requestAnimationFrame(fit);
+
+function openFull(e,btn){last=btn;$('fT').textContent=e.t;$('fF').src=e.file;$('fNew').href=e.file;$('full').hidden=false;document.body.style.overflow='hidden';$('fX').focus();}
+function closeFull(){$('full').hidden=true;$('fF').src='about:blank';document.body.style.overflow='';if(last)last.focus();}
+$('fX').onclick=closeFull;
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!$('full').hidden)closeFull();});
+
+function copy(t,b){var o=b.textContent;function ok(){b.textContent='Kopiert ✓';setTimeout(function(){b.textContent=o;},1600);}
+  function fb(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(_){b.textContent='Bitte markieren';}ta.remove();}
+  try{navigator.clipboard.writeText(t).then(ok,fb);}catch(_){fb();}}
+
+// Präsentationsmodus
+var slides=[],cur=0,on=false;
+function collect(){slides=[].slice.call(document.querySelectorAll('.wrap > header, .wrap > .chapter, .wrap > div > .ex, .wrap > .core'));slides.forEach(function(x){x.classList.add('slide');});}
+function fitSlide(){var x=slides[cur];if(!x)return;x.style.zoom=1;
+  var w=x.scrollWidth,h=x.scrollHeight,vw=window.innerWidth*0.9,vh=window.innerHeight*0.82;
+  var z=Math.min(vw/w,vh/h,1.45);x.style.zoom=z;fit();}
+function show(i){cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach(function(x,k){x.classList.toggle('off',k!==cur);if(k!==cur)x.style.zoom='';});
+  $('pCnt').textContent=(cur+1)+' / '+slides.length;$('pProg').style.width=((cur+1)/slides.length*100)+'%';
+  $('pPrev').disabled=cur===0;$('pNext').disabled=cur===slides.length-1;
+  requestAnimationFrame(fitSlide);try{location.hash='folie-'+(cur+1);}catch(_){}}
+function start(i){if(!slides.length)collect();on=true;document.body.classList.add('present');$('pBar').hidden=false;$('pProg').hidden=false;window.scrollTo(0,0);show(i||0);}
+function stop(){on=false;document.body.classList.remove('present');$('pBar').hidden=true;$('pProg').hidden=true;
+  slides.forEach(function(x){x.classList.remove('off');x.style.zoom='';});var x=slides[cur];
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(_){}
+  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(function(){});
+  requestAnimationFrame(function(){fit();if(x)x.scrollIntoView({block:'start'});});}
+$('pStart').onclick=function(){start(0);};
+$('pPrev').onclick=function(){show(cur-1);};$('pNext').onclick=function(){show(cur+1);};
+$('pEnd').onclick=stop;
+$('pFs').onclick=function(){var d=document.documentElement;try{if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(function(){$('pFs').textContent='Vollbild nicht möglich';});}catch(_){}};
+document.addEventListener('keydown',function(ev){
+  if(!on||!$('full').hidden)return;
+  var t=ev.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;
+  if(ev.key==='ArrowRight'||ev.key==='PageDown'||ev.key===' '){ev.preventDefault();show(cur+1);}
+  else if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();show(cur-1);}
+  else if(ev.key==='Home'){show(0);}else if(ev.key==='End'){show(slides.length-1);}
+  else if(ev.key==='Escape'){stop();}
+},true);
+window.addEventListener('resize',function(){if(on)fitSlide();});
+var hm=location.hash.match(/^#folie-(\d+)$/);if(hm)start(Number(hm[1])-1);
+})();
+</script>
+</body>
+</html>
