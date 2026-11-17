@@ -233,6 +233,17 @@ Gestaltung: grosse Schrift, hoher Kontrast, freundliche Sprache, Gamification-Ch
     </div>
   </section>
 
+  <section class="chapter">
+    <div><span class="lbl">Workaround</span><h2>Weiterbauen im neuen Chat</h2></div>
+    <div>
+      <p class="lead2">fobizz bietet nicht die neusten Modelle, und ein Chat stösst bei grossen Apps schnell an seine Grenzen. So umgehst du dieses Nadelöhr:</p>
+      <ol class="steps"><li>App als HTML-Datei speichern</li><li>Neuen Chat starten</li><li>Die HTML-Datei hochladen</li><li>Beschreiben, was angepasst oder ergänzt werden soll</li></ol>
+      <p class="qlbl" style="margin-top:36px">Beispiel</p>
+      <blockquote><p id="wbPrompt">«Im Anhang ist meine Lern-App als HTML-Datei. Ergänze eine zweite Schwierigkeitsstufe mit schwierigeren Aufgaben. Alles andere bleibt gleich. Gib mir die vollständige HTML-Datei zurück.»</p></blockquote>
+      <button type="button" class="copy" id="copyWb">Prompt kopieren</button>
+    </div>
+  </section>
+
   <section class="core"><p>Die <em>Absicht</em> bestimmt den Anspruch ans Ergebnis.</p></section>
 
   <footer>Quelle: VisibleVibe, imedias FHNW, «Warum Lehrpersonen vibe-coden sollten», <a href="https://visiblevibe.ch" target="_blank" rel="noopener">visiblevibe.ch</a> · Weitere Beispiele: <a href="https://bit.ly/osc-edu-space" target="_blank" rel="noopener">bit.ly/osc-edu-space</a></footer>
@@ -349,6 +360,7 @@ EX.forEach(function(e,i){
   sec.appendChild(g);$('block3').appendChild(sec);
 })();
 
+var wb=$('copyWb');wb.onclick=function(){copy($('wbPrompt').textContent.replace(/^«|»$/g,''),wb);};
 var dp=$('copyDemo');dp.onclick=function(){copy($('demoPrompt').textContent.replace(/^«|»$/g,''),dp);};
 function fit(){document.querySelectorAll('.shot iframe').forEach(function(f){f.style.transform='scale('+(f.parentNode.clientWidth/1200)+')';});}
 window.addEventListener('resize',fit);requestAnimationFrame(fit);
