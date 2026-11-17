@@ -275,9 +275,8 @@ var EX=[
  {b:1,fach:'Mathematik',stufe:'3. Oberstufe',t:'Pyramiden berechnen',img:'img/pyramiden.jpg',
   live:'https://fuchstogo.github.io/pyramiden/',
   p:'Erstelle mir eine moderne, interaktive Seite zur Berechnung der quadratischen Pyramide, der Rechteckpyramide und der Dreieckspyramide. Alles soll Schritt für Schritt erklärt und interaktiv aufgebaut sein, als Wiedereinstieg ins Thema Pyramidenberechnungen (Oberfläche und Volumen). Zielgruppe: 3. Oberstufe St. Gallen.'},
- {b:3,fach:'Mathematik',stufe:'3. Realklasse',t:'Steigung und Geradengleichung',
-  file:'apps/geradengleichung.html',live:'https://fuchstogo.github.io/geradengleichung/',
-  p:'Erstelle mir eine moderne, interaktive Seite zu Steigungen, ihrer Berechnung und der Geradengleichung. Alles soll Schritt für Schritt erklärt und interaktiv aufgebaut sein, als Wiedereinstieg ins Thema. Zielgruppe: 3. Realklasse, Oberstufe St. Gallen.'},
+ {b:3,fach:'Klassenführung',stufe:'Tool für Lehrpersonen',t:'Sitzplan-Generator',
+  file:'apps/sitzplan.html',p:null},
  {b:3,fach:'Mathematik',stufe:'Koordinatensystem',t:'Forschungstauchgang',
   file:'apps/tauchgang.html',
   p:'Erstelle ein Spiel wie «Schiffe versenken» für zwei Personen an einem Gerät. Gespielt wird auf einem Koordinatensystem von −7 bis +7. Statt Schiffen versteckt man Meerestiere, die man mit Koordinaten (x|y) sucht. Thema: Forschungstauchgang. Gestalte die Seite wie ein Tauchlogbuch, sie soll nicht nach KI aussehen. Schreibe auf Schweizer Hochdeutsch.'},
@@ -350,7 +349,7 @@ EX.forEach(function(e,i){
   var hd=el('div',{class:'ovw-head'});hd.appendChild(el('span',{class:'lbl'},'Beispiele'));hd.appendChild(el('h2',null,'Aus dem Unterricht'));
   hd.appendChild(el('p',{class:'note',style:'margin:6px 0 0'},'Antippen zeigt App und Prompt.'));sec.appendChild(hd);
   var g=el('div',{class:'cards'});
-  var ORDER=['Steigung und Geradengleichung','Zeitformen-Werkstatt','Energiewandler-Werkstatt','Escape Pumpkin Manor','Besuchstag micro:bit','L’accord de l’adjectif','Forschungstauchgang','Die Elemente eines Smartphones','Present Continuous Arena'];
+  var ORDER=['Sitzplan-Generator','Zeitformen-Werkstatt','Energiewandler-Werkstatt','Escape Pumpkin Manor','Besuchstag micro:bit','L’accord de l’adjectif','Forschungstauchgang','Die Elemente eines Smartphones','Present Continuous Arena'];
   EX.filter(function(e){return e.b!==1;}).sort(function(a,b){return ORDER.indexOf(a.t)-ORDER.indexOf(b.t);}).forEach(function(e){
     var c=el('button',{type:'button',class:'cardx','data-href':e.live||e.file||''});
     var th=el('span',{class:'shot thumb'});
