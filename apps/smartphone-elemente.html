@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Elemente eines Smartphones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4ef; --card:#ffffff; --ink:#1d2333; --muted:#646b7d; --line:#e2e0d8; --accent:#2f4dd6;
+  --alkali:#f08a24; --erdalkali:#d93a3a; --ueber:#e9b308; --g13:#7b4bc4; --g14:#2f4dd6;
+  --g15:#0e9488; --g16:#e0377f; --halogen:#3d9c3a; --lanth:#b056b8;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px}
+h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(28px,4.4vw,46px);margin:0;letter-spacing:-.02em;line-height:1.1}
+.sub{color:var(--muted);margin:8px 0 22px;max-width:680px}
+.tabs{display:flex;gap:6px;background:#e9e7df;padding:4px;border-radius:12px;width:max-content;margin-bottom:18px}
+.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:9px;font:600 14px Inter;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.chip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px 5px 8px;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip i{width:11px;height:11px;border-radius:50%;display:block}
+.chip.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.chip.reset{color:var(--muted)}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:26px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.phonebox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;position:sticky;top:16px}
+@media(max-width:860px){.phonebox{position:static}}
+.phonebox svg{width:100%;max-width:260px;display:block;margin:0 auto}
+.zone{cursor:pointer;transition:opacity .2s, fill .2s}
+.zone:hover{opacity:.85}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.parts button{border:1px solid var(--line);background:#faf9f6;border-radius:10px;padding:9px;font:600 14px Inter;cursor:pointer;color:var(--ink)}
+.parts button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:10px}
+.panel h2{font-family:"Space Grotesk",sans-serif;font-size:30px;margin:0 0 4px}
+.panel .lead{color:var(--muted);margin:0 0 18px}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+@media(max-width:600px){.sec{grid-template-columns:1fr}}
+.sec h3{margin:0 0 4px;font-size:16px}
+.sec p{margin:0;font-size:14.5px;color:#3a4152}
+.tiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:250px}
+@media(max-width:600px){.tiles{justify-content:flex-start;max-width:none}}
+.el{width:60px;height:64px;border-radius:9px;color:#fff;border:0;cursor:pointer;padding:4px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Inter;transition:transform .12s, opacity .2s, filter .2s;position:relative}
+.el:hover{transform:translateY(-2px)}
+.el .n{font-size:10px;opacity:.9;position:absolute;top:3px;left:6px}
+.el .s{font:700 22px "Space Grotesk";line-height:1;margin-top:6px}
+.el .nm{font-size:9.5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px}
+.el.dim{opacity:.18;filter:grayscale(1)}
+.el.sel{outline:3px solid var(--ink);outline-offset:2px}
+/* Periodensystem */
+.pse-wrap{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;overflow-x:auto}
+.pse{display:grid;grid-template-columns:repeat(18,minmax(34px,1fr));gap:4px;min-width:700px}
+.pse .cell{aspect-ratio:1/1.05;border-radius:6px;background:#efede6}
+.pse .el{width:auto;height:auto;aspect-ratio:1/1.05;border-radius:6px;padding:2px}
+.pse .el .s{font-size:clamp(13px,1.6vw,19px);margin-top:4px}
+.pse .el .n{font-size:8.5px;top:2px;left:4px}
+.pse .el .nm{display:none}
+.pse .gap{grid-column:1/-1;height:10px}
+.pse .mark{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted)}
+.pse-note{font-size:13px;color:var(--muted);margin:12px 2px 0}
+/* Detail */
+.detail{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);width:min(560px,calc(100% - 24px));background:var(--ink);color:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.3);transition:transform .28s ease;z-index:10;display:grid;grid-template-columns:auto 1fr;gap:16px}
+.detail.show{transform:translate(-50%,0)}
+.detail .big{width:84px;height:92px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.detail .big b{font:700 38px "Space Grotesk";line-height:1}
+.detail .big small{position:absolute;top:5px;left:8px;font-size:12px}
+.detail h4{margin:0;font:700 22px "Space Grotesk"}
+.detail .grp{font-size:13px;opacity:.75;margin-bottom:8px}
+.detail ul{margin:0;padding-left:18px;font-size:14px}
+.detail li{margin:3px 0}
+.detail li a{color:#fff;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.detail .x{position:absolute;top:8px;right:12px;background:none;border:0;color:#fff;font-size:22px;cursor:pointer;opacity:.7}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:-6px 0 20px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:13px;color:var(--muted)}
+.stat b{font:700 20px "Space Grotesk";color:var(--ink);margin-right:5px}
+footer{margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+footer a{color:var(--muted)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Die Elemente eines Smartphones</h1>
+  <p class="sub">Ein Smartphone ist eine kleine Sammlung des Periodensystems. Wähle ein Bauteil oder klicke auf ein Element, um zu sehen, wofür es gebraucht wird.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs">
+    <button class="on" data-view="phone">Smartphone</button>
+    <button data-view="pse">Periodensystem</button>
+  </div>
+
+  <section id="view-phone" class="grid">
+    <div class="phonebox">
+      <svg viewBox="0 0 220 420" aria-label="Smartphone">
+        <rect class="zone" data-part="gehaeuse" x="10" y="10" width="200" height="400" rx="32" fill="#1d2333"/>
+        <rect class="zone" data-part="bildschirm" x="22" y="46" width="176" height="320" rx="8" fill="#dfe6ff"/>
+        <circle cx="110" cy="388" r="11" fill="none" stroke="#5d6683" stroke-width="3" pointer-events="none"/>
+        <rect x="80" y="25" width="60" height="6" rx="3" fill="#5d6683" pointer-events="none"/>
+        <!-- Röntgenblick: Elektronik -->
+        <g class="zone" data-part="elektronik">
+          <rect x="40" y="70" width="140" height="120" rx="8" fill="#0e9488" opacity=".85"/>
+          <rect x="88" y="104" width="44" height="44" rx="4" fill="#0b6f66"/>
+          <g stroke="#bff0ea" stroke-width="2">
+            <path d="M88 112h-14M88 126h-14M88 140h-14M132 112h14M132 126h14M132 140h14M98 104v-12M110 104v-12M122 104v-12M98 148v12M110 148v12M122 148v12"/>
+          </g>
+          <text x="110" y="182" text-anchor="middle" fill="#fff" font-family="Inter" font-size="11" font-weight="600">Elektronik</text>
+        </g>
+        <!-- Akku -->
+        <g class="zone" data-part="akku">
+          <rect x="40" y="204" width="140" height="146" rx="10" fill="#f08a24" opacity=".9"/>
+          <rect x="98" y="198" width="24" height="8" rx="2" fill="#f08a24"/>
+          <path d="M116 236l-20 34h14l-6 30 22-38h-14z" fill="#fff"/>
+          <text x="110" y="336" text-anchor="middle" fill="#fff" font-family="Inter" font-size="11" font-weight="600">Akku</text>
+        </g>
+        <text x="110" y="62" text-anchor="middle" fill="#2f4dd6" font-family="Inter" font-size="10" font-weight="600" pointer-events="none">Bildschirm</text>
+      </svg>
+      <div class="parts" id="parts"></div>
+      <div class="hint">Tipp: Du kannst auch direkt ins Handy klicken.</div>
+    </div>
+    <div class="panel" id="panel"></div>
+  </section>
+
+  <section id="view-pse" class="hidden">
+    <div class="pse-wrap">
+      <div class="pse" id="pse"></div>
+      <p class="pse-note">Farbig sind alle Elemente, die in einem Smartphone vorkommen. Die unterste Reihe zeigt die Lanthanoide (Seltene Erden).</p>
+    </div>
+  </section>
+
+  <footer>
+    Inhalt nach der Infografik «Elements of a Smartphone» von Compound Interest (2014), <a href="https://www.compoundchem.com" target="_blank" rel="noopener">compoundchem.com</a>, lizenziert unter CC BY-NC-ND. Deutsche Fassung und interaktive Umsetzung neu gestaltet.
+  </footer>
+</div>
+
+<div class="detail" id="detail" role="dialog" aria-live="polite">
+  <button class="x" id="close" aria-label="Schliessen">×</button>
+  <div class="big" id="dBig"></div>
+  <div>
+    <h4 id="dName"></h4>
+    <div class="grp" id="dGrp"></div>
+    <div style="font-size:13px;opacity:.75;margin-bottom:2px">Kommt vor in:</div>
+    <ul id="dList"></ul>
+  </div>
+</div>
+
+<script>
+const GROUPS = {
+  alkali:{name:"Alkalimetall", c:"var(--alkali)"},
+  erdalkali:{name:"Erdalkalimetall", c:"var(--erdalkali)"},
+  ueber:{name:"Übergangsmetall", c:"var(--ueber)"},
+  g13:{name:"13. Gruppe (Borgruppe)", c:"var(--g13)"},
+  g14:{name:"14. Gruppe (Kohlenstoffgruppe)", c:"var(--g14)"},
+  g15:{name:"15. Gruppe (Stickstoffgruppe)", c:"var(--g15)"},
+  g16:{name:"16. Gruppe (Chalkogene)", c:"var(--g16)"},
+  halogen:{name:"Halogen", c:"var(--halogen)"},
+  lanth:{name:"Lanthanoid (Seltene Erde)", c:"var(--lanth)"}
+};
+// Symbol: [Ordnungszahl, Name, Gruppe, Periode/Zeile, Spalte]
+const E = {
+  Li:[3,"Lithium","alkali",2,1], C:[6,"Kohlenstoff","g14",2,14], O:[8,"Sauerstoff","g16",2,16],
+  Mg:[12,"Magnesium","erdalkali",3,2], Al:[13,"Aluminium","g13",3,13], Si:[14,"Silizium","g14",3,14], P:[15,"Phosphor","g15",3,15],
+  K:[19,"Kalium","alkali",4,1], Co:[27,"Cobalt","ueber",4,9], Ni:[28,"Nickel","ueber",4,10], Cu:[29,"Kupfer","ueber",4,11],
+  Ga:[31,"Gallium","g13",4,13], As:[33,"Arsen","g15",4,15], Br:[35,"Brom","halogen",4,17],
+  Y:[39,"Yttrium","ueber",5,3], Ag:[47,"Silber","ueber",5,11], In:[49,"Indium","g13",5,13], Sn:[50,"Zinn","g14",5,14], Sb:[51,"Antimon","g15",5,15],
+  Ta:[73,"Tantal","ueber",6,5], Au:[79,"Gold","ueber",6,11], Pb:[82,"Blei","g14",6,14],
+  La:[57,"Lanthan","lanth",9,3], Pr:[59,"Praseodym","lanth",9,5], Nd:[60,"Neodym","lanth",9,6], Eu:[63,"Europium","lanth",9,9],
+  Gd:[64,"Gadolinium","lanth",9,10], Tb:[65,"Terbium","lanth",9,11], Dy:[66,"Dysprosium","lanth",9,12]
+};
+const PARTS = {
+  bildschirm:{title:"Bildschirm", lead:"Glas, Touch-Funktion und Farben", secs:[
+    {h:"Touchscreen", els:["In","Sn","O"], t:"Indiumzinnoxid ist ein Gemisch aus Indiumoxid und Zinnoxid. Es bildet auf dem Bildschirm einen hauchdünnen, durchsichtigen Film, der Strom leitet. Nur deshalb reagiert der Bildschirm auf Berührung."},
+    {h:"Glas", els:["Al","Si","O","K"], t:"Die meisten Smartphones haben ein Aluminosilikatglas. Es besteht aus Aluminiumoxid (Al₂O₃) und Siliziumdioxid (SiO₂). Eingelagerte Kalium-Ionen machen das Glas widerstandsfähiger."},
+    {h:"Farben", els:["Y","La","Tb","Pr","Eu","Dy","Gd"], t:"Kleine Mengen verschiedener Seltenerd-Verbindungen sorgen für die Farben auf dem Display. Einige davon halten zudem UV-Licht ab, damit es nicht ins Gerät dringt."}
+  ]},
+  elektronik:{title:"Elektronik", lead:"Leiterbahnen, Chip, Lautsprecher und Lötstellen", secs:[
+    {h:"Leiterbahnen und Bauteile", els:["Cu","Ag","Au","Ta"], t:"Kupfer dient als Leitung für die Verdrahtung. Aus Kupfer, Gold und Silber bestehen die winzigen elektronischen Bauteile. Tantal ist der Hauptbestandteil der Mikrokondensatoren."},
+    {h:"Lautsprecher, Mikrofon und Vibration", els:["Ni","Dy","Pr","Tb","Nd","Gd"], t:"Nickel steckt im Mikrofon und in elektrischen Kontakten. Die Magnete in Lautsprecher und Mikrofon sind Legierungen mit Praseodym, Gadolinium und Neodym. Für den Vibrationsmotor braucht es Neodym, Terbium und Dysprosium."},
+    {h:"Chip", els:["Si","O","Sb","As","P","Ga"], t:"Der Chip wird aus reinem Silizium hergestellt. Durch Oxidation entstehen Bereiche, die keinen Strom leiten. Danach baut man gezielt andere Elemente ein (Dotierung), damit der Chip an den richtigen Stellen leitet."},
+    {h:"Lötstellen", els:["Sn","Pb"], t:"Zinn und Blei verbinden die elektronischen Teile miteinander (Löten). Neuere, bleifreie Lote bestehen aus einer Mischung von Zinn, Kupfer und Silber."}
+  ]},
+  akku:{title:"Akku", lead:"Energiespeicher des Smartphones", secs:[
+    {h:"Lithium-Ionen-Akku", els:["Li","Co","C","Al","O"], t:"Fast alle Smartphones haben einen Lithium-Ionen-Akku. Der Pluspol besteht aus Lithiumcobaltoxid, der Minuspol aus Graphit (Kohlenstoff). Manche Akkus verwenden statt Cobalt andere Metalle, zum Beispiel Mangan. Die Hülle des Akkus ist aus Aluminium."}
+  ]},
+  gehaeuse:{title:"Gehäuse", lead:"Die Hülle rund ums Gerät", secs:[
+    {h:"Material und Schutz", els:["Al","C","Mg","Br","Ni"], t:"Viele hochwertige Gehäuse und Rahmen bestehen aus Aluminium, weil es leicht und stabil ist. Einige Gehäuse sind aus Magnesiumlegierungen, andere aus Kunststoff (Kohlenstoffverbindungen). Kunststoffe enthalten Flammschutzmittel, manche davon mit Brom. Nickel kann beigemischt werden, um elektromagnetische Störungen zu verringern."}
+  ]}
+};
+
+let part="bildschirm", filter=null, selected=null;
+const $=s=>document.querySelector(s);
+
+function usage(sym){
+  const out=[];
+  for(const [k,p] of Object.entries(PARTS)) p.secs.forEach(s=>{ if(s.els.includes(sym)) out.push({part:k,label:p.title+": "+s.h}); });
+  return out;
+}
+function tile(sym){
+  const [n,name,g]=E[sym];
+  const b=document.createElement("button");
+  b.className="el"+(selected===sym?" sel":"");
+  b.style.background=GROUPS[g].c;
+  b.innerHTML=`<span class="n">${n}</span><span class="s">${sym}</span><span class="nm">${name}</span>`;
+  b.title=name; b.onclick=()=>openDetail(sym);
+  return b;
+}
+function renderStats(){
+  const all=new Set(); Object.values(PARTS).forEach(p=>p.secs.forEach(s=>s.els.forEach(e=>all.add(e))));
+  const lan=[...all].filter(s=>E[s][2]==="lanth").length;
+  $("#stats").innerHTML=`<div class="stat"><b>${all.size}</b>verschiedene Elemente</div><div class="stat"><b>4</b>Bauteile</div>`;
+}
+function renderLegend(){
+  const l=$("#legend"); l.innerHTML="";
+  for(const [k,g] of Object.entries(GROUPS)){
+    const c=document.createElement("button"); c.className="chip"+(filter===k?" on":"");
+    c.innerHTML=`<i style="background:${g.c}"></i>${g.name}`;
+    c.onclick=()=>{filter=filter===k?null:k;renderAll();};
+    l.appendChild(c);
+  }
+  if(filter){const r=document.createElement("button");r.className="chip reset";r.textContent="Filter aufheben";r.onclick=()=>{filter=null;renderAll();};l.appendChild(r);}
+}
+function renderParts(){
+  const p=$("#parts"); p.innerHTML="";
+  for(const [k,v] of Object.entries(PARTS)){
+    const b=document.createElement("button"); b.textContent=v.title; if(k===part)b.className="on";
+    b.onclick=()=>{part=k;renderAll();}; p.appendChild(b);
+  }
+  document.querySelectorAll(".zone").forEach(z=>{
+    const on=z.dataset.part===part;
+    z.style.opacity = on?1:.45;
+    if(z.dataset.part==="bildschirm") z.setAttribute("fill", on?"#c9d5ff":"#eef1fb");
+  });
+}
+function renderPanel(){
+  const p=PARTS[part], el=$("#panel");
+  el.innerHTML=`<h2>${p.title}</h2><p class="lead">${p.lead}</p>`;
+  p.secs.forEach(s=>{
+    const d=document.createElement("div"); d.className="sec";
+    d.innerHTML=`<div><h3>${s.h}</h3><p>${s.t}</p></div>`;
+    const t=document.createElement("div"); t.className="tiles"; s.els.forEach(e=>t.appendChild(tile(e)));
+    d.appendChild(t); el.appendChild(d);
+  });
+}
+function renderPSE(){
+  const g=$("#pse"); g.innerHTML="";
+  const pos={}; for(const s in E){pos[E[s][3]+"-"+E[s][4]]=s;}
+  const rows=[[1,[1,18]],[2,[1,2,...range(13,18)]],[3,[1,2,...range(13,18)]],[4,range(1,18)],[5,range(1,18)],[6,range(1,18)],[7,range(1,18)]];
+  rows.forEach(([r,cols])=>{
+    for(let c=1;c<=18;c++){
+      const key=r+"-"+c;
+      if(pos[key]){const t=tile(pos[key]);t.style.gridRow=r;t.style.gridColumn=c;g.appendChild(t);}
+      else if(cols.includes(c)){const d=document.createElement("div");d.className="cell"+((r>=6&&c===3)?" mark":"");if(r===6&&c===3)d.textContent="57–71";if(r===7&&c===3)d.textContent="89–103";d.style.gridRow=r;d.style.gridColumn=c;g.appendChild(d);}
+    }
+  });
+  const gap=document.createElement("div");gap.className="gap";gap.style.gridRow=8;g.appendChild(gap);
+  for(let c=3;c<=17;c++){
+    const key="9-"+c;
+    if(pos[key]){const t=tile(pos[key]);t.style.gridRow=9;t.style.gridColumn=c;g.appendChild(t);}
+    else{const d=document.createElement("div");d.className="cell";d.style.gridRow=9;d.style.gridColumn=c;g.appendChild(d);}
+  }
+}
+function range(a,b){const r=[];for(let i=a;i<=b;i++)r.push(i);return r;}
+function openDetail(sym){
+  selected=sym; const [n,name,g]=E[sym];
+  $("#dBig").style.background=GROUPS[g].c;
+  $("#dBig").innerHTML=`<small>${n}</small><b>${sym}</b>`;
+  $("#dName").textContent=name;
+  $("#dGrp").textContent="Ordnungszahl "+n;
+  const ul=$("#dList"); ul.innerHTML="";
+  usage(sym).forEach(u=>{const li=document.createElement("li");const a=document.createElement("a");a.textContent=u.label;a.onclick=()=>{part=u.part;showView("phone");renderAll();};li.appendChild(a);ul.appendChild(li);});
+  $("#detail").classList.add("show"); renderAll(false);
+}
+$("#close").onclick=()=>{$("#detail").classList.remove("show");selected=null;renderAll(false);};
+document.querySelectorAll(".zone").forEach(z=>z.addEventListener("click",()=>{part=z.dataset.part;renderAll();}));
+function showView(v){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.view===v));
+  $("#view-phone").classList.toggle("hidden",v!=="phone");
+  $("#view-pse").classList.toggle("hidden",v!=="pse");
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function renderAll(){renderParts();renderPanel();renderPSE();}
+renderStats(); renderAll();
+</script>
+</body>
+</html>
