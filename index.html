@@ -352,7 +352,7 @@ EX.forEach(function(e,i){
   var g=el('div',{class:'cards'});
   var ORDER=['Steigung und Geradengleichung','Zeitformen-Werkstatt','Energiewandler-Werkstatt','Escape Pumpkin Manor','Besuchstag micro:bit','L’accord de l’adjectif','Forschungstauchgang','Die Elemente eines Smartphones','Present Continuous Arena'];
   EX.filter(function(e){return e.b!==1;}).sort(function(a,b){return ORDER.indexOf(a.t)-ORDER.indexOf(b.t);}).forEach(function(e){
-    var c=el('button',{type:'button',class:'cardx'});
+    var c=el('button',{type:'button',class:'cardx','data-href':e.live||e.file||''});
     var th=el('span',{class:'shot thumb'});
     if(e.file)th.appendChild(el('iframe',{src:e.file,loading:'lazy',tabindex:'-1','aria-hidden':'true',title:''}));
     else if(e.img)th.appendChild(el('img',{src:e.img,alt:''}));
