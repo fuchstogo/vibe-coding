@@ -132,6 +132,7 @@ body.present .slide.off{display:none!important}
 body.present .slide{width:min(1160px,100%);border-top:0!important;padding:0!important;margin:0}
 body.present .ex{gap:48px}
 body.present .ovw .cp{-webkit-line-clamp:2}
+body.present .cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -262,9 +263,15 @@ var EX=[
   file:'apps/besuchstag.html',live:'https://fuchstogo.github.io/besuchstag/',
   p:'Ich benötige eine Seite für den Besuchstag, welche die 6. Klässler:innen durch den Workshop Informatik führt. Wir arbeiten mit einem micro:bit und möchten zusammen das Tutorial Schere, Stein, Papier erstellen. Die Schüler arbeiten zu zweit, es sind etwa 10 bis 15 Schülerinnen und Schüler, und ich habe zusätzlich 3 Schüler von mir, welche als Unterstützung dienen. Die Sechstklässlerinnen und Sechstklässler sollen selbstständig mittels Tutorial von makecode.org das Programm erstellen und nachher ausprobieren. Es soll auch ein herzliches Willkommen enthalten und ansprechend sein. Schaue bitte nach, wie der Auftritt der Oberstufe Centrum St.Gallen ist.',
   nach:'Danach in mehreren Runden verfeinert: drei Levels mit verschiedenen Tutorials, Tutorial in eigenem Fenster, Dateien zum Zurücksetzen der micro:bits.'},
- {b:3,fach:'Englisch',stufe:'Irregular verbs',t:'Past Simple Trainer',
-  anhang:'Irregular_verbs.pdf',
-  p:'Erstelle eine App im HTML Format, mit der die Past Simple Formen im Englischen geübt werden können. Es sollen dabei nur die Verben im angehängten Dokument geübt werden. Es sollen Aufgaben mit unterschiedlichen Schwierigkeitsstufen erstellt werden. Deutsch-Englisch Übersetzungen als Aufgabe soll ebenfalls enthalten sein. Die Aufgaben sollen Gamification-Charakter haben und einladend gestaltet sein.'},
+ {b:3,fach:'Deutsch',stufe:'Verben Teil 2',t:'Zeitformen-Werkstatt',
+  file:'apps/zeitformen.html',live:'https://mischmid85-maker.github.io/edu-space/pages/deutsch/Verben%20Teil%202/1794854387426-verben_zeitformen.html',
+  p:null,nach:'Aus dem OSC Edu-Space. Der Prompt ist hier nicht dokumentiert.'},
+ {b:3,fach:'Französisch',stufe:'dis donc! 7, Unité 2',t:'L’accord de l’adjectif',
+  file:'apps/adjectifs.html',live:'https://mischmid85-maker.github.io/edu-space/pages/franzoesisch/dd7%20Unit%C3%A9%202/1794854529959-adjectifs-unite2.html',
+  p:null,nach:'Aus dem OSC Edu-Space. Der Prompt ist hier nicht dokumentiert.'},
+ {b:3,fach:'Englisch',stufe:'Open World 1, Unit 2',t:'Present Continuous Arena',
+  file:'apps/present-continuous.html',live:'https://mischmid85-maker.github.io/edu-space/pages/englisch/OW%201%20Unit%202/1794854447416-present-continuous-arena.html',
+  p:null,nach:'Aus dem OSC Edu-Space. Der Prompt ist hier nicht dokumentiert.'},
  {b:3,fach:'Englisch',stufe:'1. Sek, Halloween',t:'Escape Pumpkin Manor',
   file:'apps/escape-room.html',anhang:'Lösungsdokument für die Lehrperson (Word)',
   p:'Erstelle einen Escape Room mit verschiedenen Rätseln im HTML Format. Das Rätsel soll von Halloween handeln und in Englisch verfasst sein. Englischniveau anpassen. Es handelt sich um Schülerinnen und Schüler in der 1. Klasse der Sekundarschule in der Schweiz im Alter von 12 Jahren. Erstelle zu jedem Rätsel auch zwei Hinweise, welche durch Drücken auf einen Button angezeigt werden. Die Buttons können erst nach 5 Minuten Rätseln gedrückt werden. Das Rätsel soll so aufgebaut sein, dass es in 45 Minuten gelöst werden kann. Verfasse für die Lehrperson ein separates Lösungsdokument.'}
@@ -324,7 +331,7 @@ EX.forEach(function(e,i){
     c.appendChild(th);
     var m=el('span',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));c.appendChild(m);
     c.appendChild(el('span',{class:'ct'},e.t));
-    if(e.p)c.appendChild(el('span',{class:'cp'},'«'+e.p+'»'));
+    c.appendChild(el('span',{class:'cp'},e.p?'«'+e.p+'»':'Aus dem OSC Edu-Space'));
     c.onclick=function(){openDetail(e,c);};
     g.appendChild(c);
   });
@@ -346,8 +353,8 @@ function openDetail(e,btn,appOnly){last=btn;$('fT').textContent=e.t;
   var A=$('fSide');A.textContent='';A.hidden=!!appOnly;
   if(!appOnly){
     var m=el('div',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));A.appendChild(m);
-    A.appendChild(el('p',{class:'qlbl',style:'margin-top:14px'},'Prompt'));
-    var q=el('blockquote');q.appendChild(el('p',null,e.p?'«'+e.p+'»':'Kein Prompt dokumentiert.'));A.appendChild(q);
+    if(e.p)A.appendChild(el('p',{class:'qlbl',style:'margin-top:14px'},'Prompt'));
+    var q=el('blockquote');if(e.p){q.appendChild(el('p',null,'«'+e.p+'»'));A.appendChild(q);}
     if(e.anhang)A.appendChild(el('p',{class:'att'},'Angehängt: '+e.anhang));
     if(e.nach)A.appendChild(el('p',{class:'after'},e.nach));
     var lk=el('div',{class:'links'});
