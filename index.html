@@ -91,6 +91,32 @@ footer{border-top:1px solid var(--line);padding:28px 0 60px;font-size:14px;color
 .full .bar a,.full .bar button{font-size:15px;font-weight:600;background:none;border:0;color:var(--acc)}
 .full iframe{flex:1;border:0;width:100%}
 
+
+/* Übersicht */
+.ovw{border-top:1px solid var(--ink);padding:56px 0 72px}
+.ovw-head{margin-bottom:28px}
+.ovw-head h2{font:600 30px/1.15 'Albert Sans',system-ui,sans-serif;margin:0}
+.ovw .lbl{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.cards{grid-template-columns:1fr}}
+.cardx{display:flex;flex-direction:column;gap:6px;text-align:left;background:#fff;border:0;padding:0;color:var(--ink)}
+.cardx .thumb{margin-bottom:8px;transition:border-color .2s}
+.cardx:hover .thumb{border-color:var(--acc)}
+.cardx .ex-meta{margin:0;font-size:13px}
+.ct{font:600 21px/1.2 'Albert Sans',system-ui,sans-serif}
+.cardx:hover .ct{color:var(--acc)}
+.cp{font-size:14px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.shot.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top left}
+.shot.thumb.empty{font-size:17px}
+.fbody{flex:1;display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:0}
+.fmedia{position:relative;display:flex;min-height:0}
+.fmedia iframe{flex:1;border:0;width:100%;height:100%}
+.fph{flex:1;display:flex;align-items:center;justify-content:center;background:var(--soft);color:var(--muted);font-size:20px;text-decoration:none;overflow:hidden}
+.fph img{width:100%;height:100%;object-fit:contain}
+.fside{width:400px;border-left:1px solid var(--line);padding:24px 26px;overflow:auto}
+.fside blockquote p{font-size:17px}
+@media(max-width:900px){.fbody{grid-template-columns:1fr;grid-template-rows:60% 40%}.fside{width:auto;border-left:0;border-top:1px solid var(--line)}}
 /* Präsentation */
 .pstart{position:fixed;top:16px;right:16px;z-index:20;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--ink);box-shadow:0 4px 14px -6px rgba(0,0,0,.25)}
 .pstart:hover{border-color:var(--acc);color:var(--acc)}
@@ -105,6 +131,7 @@ body.present .wrap{max-width:none;height:100vh;display:flex;flex-direction:colum
 body.present .slide.off{display:none!important}
 body.present .slide{width:min(1160px,100%);border-top:0!important;padding:0!important;margin:0}
 body.present .ex{gap:48px}
+body.present .ovw .cp{-webkit-line-clamp:2}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -212,7 +239,7 @@ Gestaltung: grosse Schrift, hoher Kontrast, freundliche Sprache, Gamification-Ch
 
 <div class="full" id="full" role="dialog" aria-modal="true" aria-labelledby="fT" hidden>
   <div class="bar"><b id="fT"></b><a id="fNew" href="#" target="_blank" rel="noopener">In neuem Tab ↗</a><button id="fX">Schliessen ✕</button></div>
-  <iframe id="fF" title="App"></iframe>
+  <div class="fbody"><div class="fmedia" id="fMedia"><iframe id="fF" title="App"></iframe></div><aside class="fside" id="fSide"></aside></div>
 </div>
 
 <script>
@@ -247,6 +274,7 @@ function el(t,a,x){var e=document.createElement(t);if(a)for(var k in a)e.setAttr
 var last=null;
 
 EX.forEach(function(e,i){
+  if(e.b!==1)return;
   var s=el('article',{class:'ex'});
   var L=el('div');
   var m=el('div',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));L.appendChild(m);
@@ -281,12 +309,53 @@ EX.forEach(function(e,i){
   $('block'+e.b).appendChild(s);
 });
 
+// Übersicht der Beispiele
+(function(){
+  var sec=el('section',{class:'ovw'});
+  var hd=el('div',{class:'ovw-head'});hd.appendChild(el('span',{class:'lbl'},'Beispiele'));hd.appendChild(el('h2',null,'Aus dem Unterricht'));
+  hd.appendChild(el('p',{class:'note',style:'margin:6px 0 0'},'Antippen zeigt App und Prompt.'));sec.appendChild(hd);
+  var g=el('div',{class:'cards'});
+  EX.forEach(function(e){if(e.b===1)return;
+    var c=el('button',{type:'button',class:'cardx'});
+    var th=el('span',{class:'shot thumb'});
+    if(e.file)th.appendChild(el('iframe',{src:e.file,loading:'lazy',tabindex:'-1','aria-hidden':'true',title:''}));
+    else if(e.img)th.appendChild(el('img',{src:e.img,alt:''}));
+    else{th.classList.add('empty');th.textContent='Nur Prompt';}
+    c.appendChild(th);
+    var m=el('span',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));c.appendChild(m);
+    c.appendChild(el('span',{class:'ct'},e.t));
+    if(e.p)c.appendChild(el('span',{class:'cp'},'«'+e.p+'»'));
+    c.onclick=function(){openDetail(e,c);};
+    g.appendChild(c);
+  });
+  sec.appendChild(g);$('block3').appendChild(sec);
+})();
+
 var dp=$('copyDemo');dp.onclick=function(){copy($('demoPrompt').textContent.replace(/^«|»$/g,''),dp);};
 function fit(){document.querySelectorAll('.shot iframe').forEach(function(f){f.style.transform='scale('+(f.parentNode.clientWidth/1200)+')';});}
 window.addEventListener('resize',fit);requestAnimationFrame(fit);
 
-function openFull(e,btn){last=btn;$('fT').textContent=e.t;$('fF').src=e.file;$('fNew').href=e.file;$('full').hidden=false;document.body.style.overflow='hidden';$('fX').focus();}
-function closeFull(){$('full').hidden=true;$('fF').src='about:blank';document.body.style.overflow='';if(last)last.focus();}
+function openFull(e,btn){openDetail(e,btn,true);}
+function openDetail(e,btn,appOnly){last=btn;$('fT').textContent=e.t;
+  var F=$('fF'),M=$('fMedia');M.querySelectorAll('.fph').forEach(function(x){x.remove();});
+  if(e.file){F.hidden=false;F.src=e.file;$('fNew').href=e.file;$('fNew').hidden=false;}
+  else{F.hidden=true;F.src='about:blank';$('fNew').hidden=true;
+    var ph=el('a',{class:'fph',href:e.live||'#',target:'_blank',rel:'noopener'});
+    if(e.img)ph.appendChild(el('img',{src:e.img,alt:'Bildschirmfoto: '+e.t}));else ph.textContent=e.live?'Läuft auf GitHub Pages ↗':'Zu diesem Prompt ist hier keine App hinterlegt.';
+    M.appendChild(ph);}
+  var A=$('fSide');A.textContent='';A.hidden=!!appOnly;
+  if(!appOnly){
+    var m=el('div',{class:'ex-meta'});m.appendChild(el('b',null,e.fach));m.appendChild(el('span',null,e.stufe));A.appendChild(m);
+    A.appendChild(el('p',{class:'qlbl',style:'margin-top:14px'},'Prompt'));
+    var q=el('blockquote');q.appendChild(el('p',null,e.p?'«'+e.p+'»':'Kein Prompt dokumentiert.'));A.appendChild(q);
+    if(e.anhang)A.appendChild(el('p',{class:'att'},'Angehängt: '+e.anhang));
+    if(e.nach)A.appendChild(el('p',{class:'after'},e.nach));
+    var lk=el('div',{class:'links'});
+    if(e.p){var c=el('button',{type:'button',class:'copy',style:'margin:0'},'Prompt kopieren');c.onclick=function(){copy(e.p,c);};lk.appendChild(c);}
+    if(e.live)lk.appendChild(el('a',{href:e.live,target:'_blank',rel:'noopener'},'Live-Link ↗'));
+    A.appendChild(lk);}
+  $('full').hidden=false;document.body.style.overflow='hidden';$('fX').focus();}
+function closeFull(){$('full').hidden=true;$('fMedia').querySelectorAll('.fph').forEach(function(x){x.remove();});$('fF').src='about:blank';document.body.style.overflow=on?'hidden':'';if(last)last.focus();}
 $('fX').onclick=closeFull;
 document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!$('full').hidden)closeFull();});
 
@@ -296,7 +365,7 @@ function copy(t,b){var o=b.textContent;function ok(){b.textContent='Kopiert ✓'
 
 // Präsentationsmodus
 var slides=[],cur=0,on=false;
-function collect(){slides=[].slice.call(document.querySelectorAll('.wrap > header, .wrap > .chapter, .wrap > div > .ex, .wrap > .core'));slides.forEach(function(x){x.classList.add('slide');});}
+function collect(){slides=[].slice.call(document.querySelectorAll('.wrap > header, .wrap > .chapter, .wrap > div > .ex, .wrap > div > .ovw, .wrap > .core'));slides.forEach(function(x){x.classList.add('slide');});}
 function fitSlide(){var x=slides[cur];if(!x)return;x.style.zoom=1;
   var w=x.scrollWidth,h=x.scrollHeight,vw=window.innerWidth*0.9,vh=window.innerHeight*0.82;
   var z=Math.min(vw/w,vh/h,1.45);x.style.zoom=z;fit();}
